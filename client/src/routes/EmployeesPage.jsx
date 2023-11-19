@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import Button from "../components/UI/Button";
 
 function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
-  const { token } = useSelector((state) => state.auth);
+  const { id } = useSelector((state) => state.auth);
 
   useEffect(() => {
     (async function () {
@@ -21,18 +22,30 @@ function EmployeesPage() {
 
   return (
     <>
-      <h1 className="text-4xl text-center font-semibold">Employees</h1>
+      <h1 className="text-4xl text-center font-semibold mt-5 mb-10">
+        Employees
+      </h1>
       <div>
-        <table className="border border-slate-950 mx-auto">
-          <tbody>
+        <table className="mx-auto">
+          <thead className="border-b-2 border-b-slate-700">
+            <tr>
+              <th>Username</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-700">
             {employees.map((employee) => (
               <tr key={employee.id}>
-                <td className="border border-slate-950 px-24 py-3">
-                  {employee.username}
-                </td>
-                <td className="border border-slate-950 px-12 py-3">
-                  <button className="border">Detail</button>
-                  <button className="border">Delete</button>
+                <td className="px-24 py-3">{employee.username}</td>
+                <td className="px-12 py-3 flex gap-2">
+                  <Button
+                    type="link"
+                    href={`/employees/${employee.id}`}
+                    variant="sky"
+                  >
+                    Detail
+                  </Button>
+                  {employee.id !== id && <Button variant="red">Delete</Button>}
                 </td>
               </tr>
             ))}

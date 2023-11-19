@@ -2,6 +2,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, NavLink } from "react-router-dom";
 import { logout } from "../../store/reducers/auth";
+import Button from "./Button";
 
 function Navbar() {
   const { token } = useSelector((state) => state.auth);
@@ -51,12 +52,9 @@ function Navbar() {
               </NavLink>
             </li>
             <li>
-              <button
-                onClick={logoutHandler}
-                className="text-white px-4 py-1.5 rounded-md bg-red-500 hover:bg-red-600 transition-all"
-              >
+              <Button onClick={logoutHandler} variant="red">
                 Logout
-              </button>
+              </Button>
             </li>
           </ul>
         )}

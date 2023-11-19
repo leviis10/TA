@@ -10,6 +10,7 @@ import TransactionsPage from "./routes/TransactionsPage.jsx";
 import EmployeesPage from "./routes/EmployeesPage.jsx";
 import SuppliersPage from "./routes/SuppliersPage.jsx";
 import StocksPage from "./routes/StocksPage.jsx";
+import EmployeeDetailPage from "./routes/EmployeeDetailPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "employees",
         element: <EmployeesPage />,
+      },
+      {
+        path: "employees/:employeeId",
+        element: <EmployeeDetailPage />,
       },
       {
         path: "suppliers",
