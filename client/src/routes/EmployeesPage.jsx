@@ -22,9 +22,7 @@ function EmployeesPage() {
 
   return (
     <>
-      <h1 className="text-4xl text-center font-semibold mt-5 mb-10">
-        Employees
-      </h1>
+      <h1 className="text-4xl text-center font-semibold mb-10">Employees</h1>
       <div>
         <table className="mx-auto">
           <thead className="border-b-2 border-b-slate-700">
