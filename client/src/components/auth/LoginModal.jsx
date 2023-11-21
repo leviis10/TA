@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../../store/reducers/auth";
 import Input from "../UI/Input";
+import Card from "../UI/Card";
 
 function LoginModal() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -34,11 +35,8 @@ function LoginModal() {
   }
 
   return (
-    <>
-      <form
-        onSubmit={loginHandler}
-        className="max-w-md border-2 rounded-lg p-6 mt-16 mx-auto"
-      >
+    <Card className="absolute bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 w-[32rem]">
+      <form onSubmit={loginHandler}>
         <div className="flex flex-col gap-2 mb-4">
           <label htmlFor="username">Username</label>
           <Input
@@ -61,7 +59,7 @@ function LoginModal() {
           Login
         </button>
       </form>
-    </>
+    </Card>
   );
 }
 

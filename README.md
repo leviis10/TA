@@ -4,9 +4,7 @@ semangat mengerjakan tugas akhir levi
 
 ## Thing To Do
 
-- Add feature to see employee detail
-- Edit spesific employee
-- delete employee
+- Continue implement add employee feature
 
 ## Implemented Features
 
