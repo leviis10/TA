@@ -16,16 +16,20 @@ function EditEmployeePage() {
 
   useEffect(() => {
     (async function () {
-      // Get Employee data
-      const { data } = await axios.get(`/api/employees/${employeeId}`);
+      try {
+        // Get Employee data
+        const { data } = await axios.get(`/api/employees/${employeeId}`);
 
-      // Pre fill form with employee data
-      setUsernameInput(data.username);
-      setEmailInput(data.email);
-      setPhoneNumberInput(data.phoneNumber);
-      setAddressInput(data.address);
+        // Pre fill form with employee data
+        setUsernameInput(data.username);
+        setEmailInput(data.email);
+        setPhoneNumberInput(data.phoneNumber);
+        setAddressInput(data.address);
+      } catch (err) {
+        navigate("/employees");
+      }
     })();
-  }, [employeeId]);
+  }, [employeeId, navigate]);
 
   function changeUsernameInputHandler(e) {
     setUsernameInput(e.target.value);
@@ -130,9 +134,19 @@ function EditEmployeePage() {
           </div>
 
           {/* Button */}
-          <Button variant="amber" className="text-lg">
-            Edit Employee
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="red"
+              type="link"
+              href={`/employees/${employeeId}`}
+              className="text-lg"
+            >
+              Cancel Edit
+            </Button>
+            <Button variant="amber" className="text-lg">
+              Edit Employee
+            </Button>
+          </div>
         </form>
       </Card>
     </>

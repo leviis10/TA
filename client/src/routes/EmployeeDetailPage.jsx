@@ -31,6 +31,7 @@ function EmployeeDetailPage() {
             variant="amber"
             type="link"
             href={`/employees/${employee.id}/edit`}
+            className="mb-4"
           >
             Edit Employee
           </Button>
