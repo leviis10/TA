@@ -4,6 +4,7 @@ const loginSchema = checkSchema({
   username: {
     notEmpty: true,
     errorMessage: "Invalid username",
+    trim: true,
   },
   password: {
     notEmpty: true,

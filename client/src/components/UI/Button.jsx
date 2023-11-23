@@ -12,7 +12,10 @@ function Button(props) {
       style += "text-black bg-sky-400 hover:bg-sky-500";
     }
     if (variant === "emerald") {
-      style += "text-black bg-emerald-500 hover:bg-emerald-600";
+      style += "text-black bg-emerald-400 hover:bg-emerald-500";
+    }
+    if (variant === "amber") {
+      style += "text-black bg-amber-400 hover:bg-amber-500";
     }
 
     return `${style} px-4 py-1.5 rounded-md transition-all ${className}`;

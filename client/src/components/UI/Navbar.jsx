@@ -16,9 +16,9 @@ function Navbar() {
   }
 
   function isLinkActive({ isActive }) {
-    let linkStyle = "hover:text-gray-50 transition-all";
+    let linkStyle = "hover:text-zinc-50 transition-all";
     if (isActive) {
-      linkStyle += " text-gray-50";
+      linkStyle += " text-zinc-50";
     }
     return linkStyle;
   }

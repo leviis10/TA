@@ -1,6 +1,6 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import Button from "../components/UI/Button";
 
 function EmployeesPage() {
@@ -20,6 +20,21 @@ function EmployeesPage() {
     })();
   }, []);
 
+  async function deleteEmployee(employee) {
+    try {
+      // Delete employee
+      await axios.delete(`/api/employees/${employee.id}`);
+
+      // Fetch employee again from database
+      const { data } = await axios.get("/api/employees");
+      setEmployees(data);
+    } catch (err) {
+      if (err.response) {
+        console.error(err.response.data.message);
+      }
+    }
+  }
+
   return (
     <>
       <h1 className="text-4xl text-center font-semibold mb-10">Employees</h1>
@@ -29,7 +44,7 @@ function EmployeesPage() {
             + Add
           </Button>
         </div>
-        <div className="divide-y divide-slate-400 ">
+        <div className="divide-y divide-zinc-400 ">
           <div className="grid grid-cols-2">
             <p className="text-center font-bold text-lg">Username</p>
             <p className="text-center font-bold text-lg">Action</p>
@@ -48,7 +63,14 @@ function EmployeesPage() {
                 >
                   Detail
                 </Button>
-                {employee.id !== id && <Button variant="red">Delete</Button>}
+                {employee.id !== id && (
+                  <Button
+                    variant="red"
+                    onClick={deleteEmployee.bind(null, employee)}
+                  >
+                    Delete
+                  </Button>
+                )}
               </div>
             </div>
           ))}

@@ -12,6 +12,7 @@ import SuppliersPage from "./routes/SuppliersPage.jsx";
 import StocksPage from "./routes/StocksPage.jsx";
 import EmployeeDetailPage from "./routes/EmployeeDetailPage.jsx";
 import AddEmployeePage from "./routes/AddEmployeePage.jsx";
+import EditEmployeePage from "./routes/EditEmployeePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: "employees/:employeeId",
         element: <EmployeeDetailPage />,
+      },
+      {
+        path: "employees/:employeeId/edit",
+        element: <EditEmployeePage />,
       },
       {
         path: "suppliers",
