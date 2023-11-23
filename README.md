@@ -4,19 +4,15 @@ semangat mengerjakan tugas akhir levi
 
 ## Thing To Do
 
-- Continue implement add employee feature
+- CRUD "stock"
 
 ## Implemented Features
 
 - Authentication
+- Employees route CRUD
+- Suppliers route CRUD
 
 ## Unimplemented Features
-
-- CRUD employee
-
-- Create "supplier" model
-- Create "supplier seed data"
-- CRUD "supplier"
 
 - Create "stock" model
 - Create "stock seed data"

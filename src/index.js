@@ -8,6 +8,8 @@ const sequelize = require("./db");
 const Employee = require("./models/Employee");
 const authRoute = require("./routes/authRoute");
 const employeesRoute = require("./routes/employeesRoute");
+const suppliersRoute = require("./routes/suppliersRoute");
+const ExpressError = require("./utils/ExpressError");
 
 const app = express();
 
@@ -33,8 +35,13 @@ app.use(cookieParser());
 // App Route
 app.use("/api/auth", authRoute);
 app.use("/api/employees", employeesRoute);
+app.use("/api/suppliers", suppliersRoute);
 
 // Error handler
+app.all("*", (req, res) => {
+  throw new ExpressError("Resource not found", 404);
+});
+
 app.use((err, req, res, next) => {
   const { message = "Something went wrong", statusCode = 500 } = err;
   res.status(statusCode).send({ message, statusCode });

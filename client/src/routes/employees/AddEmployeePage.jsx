@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../components/UI/Button";
-import Card from "../components/UI/Card";
-import Input from "../components/UI/Input";
-import Textarea from "../components/UI/Textarea";
+import Button from "../../components/UI/Button";
+import Card from "../../components/UI/Card";
+import Input from "../../components/UI/Input";
+import Textarea from "../../components/UI/Textarea";
 
 function AddEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");

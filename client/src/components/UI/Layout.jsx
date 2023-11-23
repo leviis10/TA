@@ -4,7 +4,7 @@ function Layout(props) {
   return (
     <>
       <Navbar />
-      <main className="h-full">{props.children}</main>
+      <main className="container">{props.children}</main>
     </>
   );
 }

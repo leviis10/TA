@@ -14,6 +14,7 @@ async function isLoggedIn(req, res, next) {
     attributes: { exclude: ["password"] },
   });
   if (!user) {
+    res.clearCookie("authToken");
     return next(new ExpressError("You are not logged in", 401));
   }
 
