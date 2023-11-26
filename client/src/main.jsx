@@ -9,7 +9,7 @@ import { store } from "./store";
 import TransactionsPage from "./routes/TransactionsPage.jsx";
 import EmployeesPage from "./routes/employees/EmployeesPage.jsx";
 import SuppliersPage from "./routes/suppliers/SuppliersPage.jsx";
-import StocksPage from "./routes/StocksPage.jsx";
+import StocksPage from "./routes/stocks/StocksPage.jsx";
 import EmployeeDetailPage from "./routes/employees/EmployeeDetailPage.jsx";
 import AddEmployeePage from "./routes/employees/AddEmployeePage.jsx";
 import EditEmployeePage from "./routes/employees/EditEmployeePage.jsx";
@@ -17,6 +17,9 @@ import ErrorPage from "./routes/ErrorPage.jsx";
 import SupplierDetailPage from "./routes/suppliers/SupplierDetailPage.jsx";
 import EditSupplierPage from "./routes/suppliers/EditSupplierPage.jsx";
 import AddSupplierPage from "./routes/suppliers/AddSupplierPage.jsx";
+import StockDetailPage from "./routes/stocks/StockDetailPage.jsx";
+import EditStockPage from "./routes/stocks/EditStockPage.jsx";
+import AddStockPage from "./routes/stocks/AddStockPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,10 +30,14 @@ const router = createBrowserRouter([
         path: "",
         element: <HomePage />,
       },
+
+      //  Transactions page
       {
         path: "transactions",
         element: <TransactionsPage />,
       },
+
+      // Employees page
       {
         path: "employees",
         element: <EmployeesPage />,
@@ -47,6 +54,8 @@ const router = createBrowserRouter([
         path: "employees/:employeeId/edit",
         element: <EditEmployeePage />,
       },
+
+      // Suppliers page
       {
         path: "suppliers",
         element: <SuppliersPage />,
@@ -63,9 +72,23 @@ const router = createBrowserRouter([
         path: "suppliers/:supplierId/edit",
         element: <EditSupplierPage />,
       },
+
+      // Stocks page
       {
         path: "stocks",
         element: <StocksPage />,
+      },
+      {
+        path: "stocks/add",
+        element: <AddStockPage />,
+      },
+      {
+        path: "stocks/:stockId",
+        element: <StockDetailPage />,
+      },
+      {
+        path: "stocks/:stockId/edit",
+        element: <EditStockPage />,
       },
     ],
     errorElement: <ErrorPage />,

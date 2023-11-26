@@ -31,10 +31,15 @@ function SuppliersPage() {
 
   return (
     <>
-      <h1 className="text-4xl text-center font-semibold mb-10">Suppliers</h1>
+      <h1 className="text-4xl text-center font-semibold mb-6">Suppliers</h1>
       <div className="max-w-lg mx-auto">
         <div className="flex justify-end">
-          <Button variant="emerald" type="link" href="/suppliers/add">
+          <Button
+            variant="emerald"
+            type="link"
+            href="/suppliers/add"
+            className="mb-2"
+          >
             + Add
           </Button>
         </div>

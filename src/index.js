@@ -9,7 +9,10 @@ const Employee = require("./models/Employee");
 const authRoute = require("./routes/authRoute");
 const employeesRoute = require("./routes/employeesRoute");
 const suppliersRoute = require("./routes/suppliersRoute");
+const stocksRoute = require("./routes/stocksRoute");
 const ExpressError = require("./utils/ExpressError");
+const Supplier = require("./models/Supplier");
+const Stock = require("./models/Stock");
 
 const app = express();
 
@@ -20,9 +23,13 @@ const app = express();
     sequelize.authenticate();
     console.log("Connected to the database");
 
+    // Association definition
+    Supplier.hasMany(Stock, { foreignKey: "supplier" });
+    Stock.belongsTo(Supplier, { foreignKey: "supplier" });
+
     // Synchronize database
-    await Employee.sync();
-    console.log("Employee table synchronized");
+    await sequelize.sync();
+    console.log("Table synchronized");
   } catch (err) {
     console.error(err.message);
   }
@@ -36,6 +43,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoute);
 app.use("/api/employees", employeesRoute);
 app.use("/api/suppliers", suppliersRoute);
+app.use("/api/stocks", stocksRoute);
 
 // Error handler
 app.all("*", (req, res) => {

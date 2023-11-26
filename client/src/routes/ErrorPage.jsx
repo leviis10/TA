@@ -1,5 +1,11 @@
+import Layout from "../components/UI/Layout";
+
 function ErrorPage() {
-  return <h1>Error Page</h1>;
+  return (
+    <Layout>
+      <h1>Error Page</h1>
+    </Layout>
+  );
 }
 
 export default ErrorPage;

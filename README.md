@@ -5,6 +5,7 @@ semangat mengerjakan tugas akhir levi
 ## Thing To Do
 
 - CRUD "stock"
+- Create PATCH route for updating stock
 
 ## Implemented Features
 

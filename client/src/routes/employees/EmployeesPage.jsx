@@ -37,10 +37,15 @@ function EmployeesPage() {
 
   return (
     <>
-      <h1 className="text-4xl text-center font-semibold mb-10">Employees</h1>
+      <h1 className="text-4xl text-center font-semibold mb-6">Employees</h1>
       <div className="max-w-lg mx-auto">
         <div className="flex justify-end">
-          <Button variant="emerald" type="link" href="/employees/add">
+          <Button
+            variant="emerald"
+            type="link"
+            href="/employees/add"
+            className="mb-2"
+          >
             + Add
           </Button>
         </div>
