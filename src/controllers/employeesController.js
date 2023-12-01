@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const Employee = require("../models/Employee");
 const ExpressError = require("../utils/ExpressError");
 const catchAsync = require("../utils/catchAsync");
@@ -21,7 +22,12 @@ const getEmployee = catchAsync(async (req, res) => {
 });
 
 const createEmployee = catchAsync(async (req, res) => {
-  await Employee.create({ ...req.body, role: "employee" });
+  const encryptedPassword = await bcrypt.hash(req.body.password, 12);
+  await Employee.create({
+    ...req.body,
+    role: "employee",
+    password: encryptedPassword,
+  });
   res.status(201).send({ message: "Employee created successfully" });
 });
 
