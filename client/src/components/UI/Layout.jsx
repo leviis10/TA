@@ -4,7 +4,7 @@ function Layout(props) {
   return (
     <>
       <Navbar />
-      <main className="container">{props.children}</main>
+      <main className="container mx-auto">{props.children}</main>
     </>
   );
 }

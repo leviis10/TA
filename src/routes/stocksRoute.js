@@ -8,6 +8,7 @@ const isAdmin = require("../middlewares/isAdmin");
 const validateSchema = require("../middlewares/validateSchema");
 const editStockSchema = require("../schemas/editStockSchema");
 const addStockSchema = require("../schemas/addStockSchema");
+const { Op } = require("sequelize");
 
 const router = express.Router();
 
@@ -15,7 +16,21 @@ router.get(
   "/",
   isLoggedIn,
   catchAsync(async (req, res) => {
-    const stocks = await Stock.findAll({ include: Supplier });
+    const { query } = req.query;
+    let stocks;
+    if (!query) {
+      stocks = await Stock.findAll({ include: Supplier });
+    }
+    if (query) {
+      stocks = await Stock.findAll({
+        include: Supplier,
+        where: {
+          name: {
+            [Op.iLike]: `%${query}%`,
+          },
+        },
+      });
+    }
     res.send(stocks);
   })
 );

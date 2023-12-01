@@ -3,23 +3,26 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import HomePage from "./routes/HomePage.jsx";
-import Root from "./routes/root.jsx";
-import { store } from "./store";
-import TransactionsPage from "./routes/TransactionsPage.jsx";
-import EmployeesPage from "./routes/employees/EmployeesPage.jsx";
-import SuppliersPage from "./routes/suppliers/SuppliersPage.jsx";
-import StocksPage from "./routes/stocks/StocksPage.jsx";
-import EmployeeDetailPage from "./routes/employees/EmployeeDetailPage.jsx";
 import AddEmployeePage from "./routes/employees/AddEmployeePage.jsx";
 import EditEmployeePage from "./routes/employees/EditEmployeePage.jsx";
+import EmployeeDetailPage from "./routes/employees/EmployeeDetailPage.jsx";
+import EmployeesPage from "./routes/employees/EmployeesPage.jsx";
 import ErrorPage from "./routes/ErrorPage.jsx";
-import SupplierDetailPage from "./routes/suppliers/SupplierDetailPage.jsx";
-import EditSupplierPage from "./routes/suppliers/EditSupplierPage.jsx";
-import AddSupplierPage from "./routes/suppliers/AddSupplierPage.jsx";
-import StockDetailPage from "./routes/stocks/StockDetailPage.jsx";
-import EditStockPage from "./routes/stocks/EditStockPage.jsx";
+import HomePage from "./routes/HomePage.jsx";
+import Root from "./routes/root.jsx";
 import AddStockPage from "./routes/stocks/AddStockPage.jsx";
+import EditStockPage from "./routes/stocks/EditStockPage.jsx";
+import StockDetailPage from "./routes/stocks/StockDetailPage.jsx";
+import StocksPage from "./routes/stocks/StocksPage.jsx";
+import AddSupplierPage from "./routes/suppliers/AddSupplierPage.jsx";
+import EditSupplierPage from "./routes/suppliers/EditSupplierPage.jsx";
+import SupplierDetailPage from "./routes/suppliers/SupplierDetailPage.jsx";
+import SuppliersPage from "./routes/suppliers/SuppliersPage.jsx";
+import TransactionsPage from "./routes/transactions/TransactionsPage.jsx";
+import { store } from "./store";
+import AddSellingTransactionPage from "./routes/transactions/AddSellingTransactionPage.jsx";
+import TransactionDetailPage from "./routes/transactions/TransactionDetailPage.jsx";
+import AddPurchaseTransactionPage from "./routes/transactions/AddPurchaseTransactionPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +38,18 @@ const router = createBrowserRouter([
       {
         path: "transactions",
         element: <TransactionsPage />,
+      },
+      {
+        path: "transactions/:transactionGroupId",
+        element: <TransactionDetailPage />,
+      },
+      {
+        path: "transactions/add/sell",
+        element: <AddSellingTransactionPage />,
+      },
+      {
+        path: "transactions/add/purchase",
+        element: <AddPurchaseTransactionPage />,
       },
 
       // Employees page

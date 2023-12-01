@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Button from "../../components/UI/Button";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { PlusIcon } from "@heroicons/react/24/solid";
 
 function StocksPage() {
   const [stocks, setStocks] = useState([]);
@@ -38,47 +39,60 @@ function StocksPage() {
             variant="emerald"
             type="link"
             href="/stocks/add"
-            className="mb-2"
+            className="mb-2 flex items-center gap-1"
           >
-            + Add
+            <PlusIcon className="h-4 w-4" /> Add
           </Button>
         </div>
 
-        {/* Table */}
-        <div className="divide-y divide-zinc-400 ">
-          {/* Heading row */}
-          <div className="grid grid-cols-4 gap-x-4 justify-items-center">
-            <p className="font-bold text-lg">Stock Name</p>
-            <p className="font-bold text-lg">Supplier</p>
-            <p className="font-bold text-lg">Quantity</p>
-            <p className="font-bold text-lg">Action</p>
-          </div>
+        {/* Stocks Table */}
+        {/* If there is no stock */}
+        {stocks.length === 0 && (
+          <p className="text-center text-2xl font-medium">
+            There is no stock yet
+          </p>
+        )}
 
-          {/* Data row */}
-          {stocks.map((stock) => (
-            <div
-              key={stock.id}
-              className="grid grid-cols-4 gap-x-4 py-2 justify-items-center items-center"
-            >
-              <p className="text-center">{stock.name}</p>
-              <p className="text-center">{stock.Supplier.name}</p>
-              <p>{stock.quantity}</p>
-              <div className="flex gap-2">
-                <Button variant="sky" type="link" href={`/stocks/${stock.id}`}>
-                  Detail
-                </Button>
-                {role === "admin" && (
-                  <Button
-                    variant="red"
-                    onClick={deleteStockHandler.bind(null, stock)}
-                  >
-                    Delete
-                  </Button>
-                )}
-              </div>
+        {stocks.length > 0 && (
+          <div className="divide-y divide-zinc-400 ">
+            {/* Heading row */}
+            <div className="grid grid-cols-4 gap-x-4 justify-items-center">
+              <p className="font-bold text-lg">Stock Name</p>
+              <p className="font-bold text-lg">Supplier</p>
+              <p className="font-bold text-lg">Quantity</p>
+              <p className="font-bold text-lg">Action</p>
             </div>
-          ))}
-        </div>
+
+            {/* Data row */}
+            {stocks.map((stock) => (
+              <div
+                key={stock.id}
+                className="grid grid-cols-4 gap-x-4 py-2 justify-items-center items-center"
+              >
+                <p className="text-center">{stock.name}</p>
+                <p className="text-center">{stock.Supplier.name}</p>
+                <p>{stock.quantity}</p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="sky"
+                    type="link"
+                    href={`/stocks/${stock.id}`}
+                  >
+                    Detail
+                  </Button>
+                  {role === "admin" && (
+                    <Button
+                      variant="red"
+                      onClick={deleteStockHandler.bind(null, stock)}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

@@ -18,7 +18,7 @@ function Button(props) {
       style += "text-black bg-amber-400 hover:bg-amber-500";
     }
 
-    return `${style} px-4 py-1.5 rounded-md transition-all ${className}`.trim();
+    return `${style} px-4 py-1.5 rounded-md transition-all ${className}`;
   }
 
   // If the type is "link"
@@ -27,6 +27,15 @@ function Button(props) {
       <Link to={href} className={`${buttonStyle()} inline-block`}>
         {children}
       </Link>
+    );
+  }
+
+  // If the type is "button"
+  if (type === "button") {
+    return (
+      <button type="button" onClick={onClick} className={buttonStyle()}>
+        {children}
+      </button>
     );
   }
 

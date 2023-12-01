@@ -25,7 +25,7 @@ function Navbar() {
 
   return (
     <nav className="bg-sky-400 py-3 mb-5">
-      <div className="container flex items-center justify-between">
+      <div className="container flex items-center justify-between mx-auto">
         <NavLink to={"/"} className="text-xl">
           SITOBASM
         </NavLink>

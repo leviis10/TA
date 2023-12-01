@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { login } from "../../store/reducers/auth";
+import { setIsLoading } from "../../store/reducers/ui";
 import Input from "../UI/Input";
 import Card from "../UI/Card";
 
@@ -12,17 +13,25 @@ function LoginModal() {
 
   async function loginHandler(e) {
     try {
+      // Prevent form default behavioiur
       e.preventDefault();
 
+      // Change isLoading global state
+      dispatch(setIsLoading(true));
+
+      // Send POST request to the backend
       const { data } = await axios.post("/api/auth", {
         username: usernameInput,
         password: passwordInput,
       });
+
+      // Log user in
       dispatch(login(data));
     } catch (err) {
-      if (err.response) {
-        console.log(err.response);
-      }
+      // Do something
+      console.error(err.response.data.message);
+    } finally {
+      dispatch(setIsLoading(false));
     }
   }
 

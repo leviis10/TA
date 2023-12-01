@@ -5,14 +5,18 @@ const express = require("express");
 
 const cookieParser = require("cookie-parser");
 const sequelize = require("./db");
-const Employee = require("./models/Employee");
 const authRoute = require("./routes/authRoute");
 const employeesRoute = require("./routes/employeesRoute");
 const suppliersRoute = require("./routes/suppliersRoute");
+const transactionsRoute = require("./routes/transactionsRoute");
 const stocksRoute = require("./routes/stocksRoute");
+const transactionGroupRoute = require("./routes/transactionGroupsRoute");
 const ExpressError = require("./utils/ExpressError");
 const Supplier = require("./models/Supplier");
 const Stock = require("./models/Stock");
+const Transaction = require("./models/Transaction");
+const TransactionGroup = require("./models/TransactionGroup");
+const Employee = require("./models/Employee");
 
 const app = express();
 
@@ -24,8 +28,29 @@ const app = express();
     console.log("Connected to the database");
 
     // Association definition
+    // Supplier --> Stock (1 : M)
     Supplier.hasMany(Stock, { foreignKey: "supplier" });
     Stock.belongsTo(Supplier, { foreignKey: "supplier" });
+
+    // Stock --> Transaction (1 : M)
+    Stock.hasMany(Transaction, { foreignKey: "stockId", onDelete: "SET NULL" });
+    Transaction.belongsTo(Stock, { foreignKey: "stockId" });
+
+    // Employee --> TransactionGroup (1 : M)
+    Employee.hasMany(TransactionGroup, {
+      foreignKey: "buyer",
+      onDelete: "SET NULL",
+    });
+    TransactionGroup.belongsTo(Employee, { foreignKey: "buyer" });
+
+    // TransactionGroup --> Transaction (1 : M)
+    TransactionGroup.hasMany(Transaction, {
+      foreignKey: "transactionGroupId",
+      onDelete: "CASCADE",
+    });
+    Transaction.belongsTo(TransactionGroup, {
+      foreignKey: "transactionGroupId",
+    });
 
     // Synchronize database
     await sequelize.sync();
@@ -44,6 +69,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/employees", employeesRoute);
 app.use("/api/suppliers", suppliersRoute);
 app.use("/api/stocks", stocksRoute);
+app.use("/api/transactions", transactionsRoute);
+app.use("/api/transaction-groups", transactionGroupRoute);
 
 // Error handler
 app.all("*", (req, res) => {

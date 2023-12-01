@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { PlusIcon } from "@heroicons/react/24/solid";
 import Button from "../../components/UI/Button";
 
 function EmployeesPage() {
@@ -13,9 +14,7 @@ function EmployeesPage() {
         const { data } = await axios.get("/api/employees");
         setEmployees(data);
       } catch (err) {
-        if (err.response) {
-          console.log(err.response.data);
-        }
+        console.error(err.response.data.message);
       }
     })();
   }, []);
@@ -44,9 +43,9 @@ function EmployeesPage() {
             variant="emerald"
             type="link"
             href="/employees/add"
-            className="mb-2"
+            className="mb-2 flex items-center gap-1"
           >
-            + Add
+            <PlusIcon className="h-4 w-4" /> Add
           </Button>
         </div>
         <div className="divide-y divide-zinc-400 ">
