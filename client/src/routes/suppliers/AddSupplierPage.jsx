@@ -5,12 +5,15 @@ import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function AddSupplierPage() {
   const [supplierNameInput, setSupplierNameInput] = useState("");
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
   const [addressInput, setAddressInput] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function changeSupplierNameInputHandler(e) {
     setSupplierNameInput(e.target.value);
@@ -36,6 +39,9 @@ function AddSupplierPage() {
         address: addressInput,
       };
 
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
       // Send request to the API
       const { data } = await axios.post("/api/suppliers", supplier);
 
@@ -47,7 +53,15 @@ function AddSupplierPage() {
       // Redirect to new supplier detail page
       navigate(`/suppliers/${data.id}`);
     } catch (err) {
-      console.error(err.response.data.message);
+      // Do something when error
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

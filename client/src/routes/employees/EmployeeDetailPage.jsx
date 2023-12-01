@@ -2,23 +2,39 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../components/UI/Button";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function EmployeeDetailPage() {
   const [employee, setEmployee] = useState();
   const { employeeId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // GET employee detail
         const { data } = await axios.get(`/api/employees/${employeeId}`);
+
+        // Set employee detail to the state
         setEmployee(data);
       } catch (err) {
-        navigate("/employees");
+        // Do something when error
+        if (err.response) {
+          console.error(err.response.data.message);
+        }
         console.error(err);
+        navigate("/employees");
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, [employeeId, navigate]);
+  }, [employeeId, navigate, dispatch]);
 
   return (
     <>

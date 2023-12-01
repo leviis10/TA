@@ -6,6 +6,7 @@ import Layout from "../components/UI/Layout";
 import LoginModal from "../components/auth/LoginModal";
 import { login } from "../store/reducers/auth";
 import Spinner from "../components/UI/Spinner";
+import { setIsLoading } from "../store/reducers/ui";
 
 function Root() {
   const { token } = useSelector((state) => state.auth);
@@ -17,12 +18,22 @@ function Root() {
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // GET user token from cookies
         const { data } = await axios.get("/api/auth");
+
+        // If there is a token log user in
         dispatch(login(data));
       } catch (err) {
+        // Redirect user to "/" if there is no authToken in cookies
         if (location.pathname !== "/") {
           navigate("/");
         }
+      } finally {
+        // Delete loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
   }, [dispatch, navigate, location]);

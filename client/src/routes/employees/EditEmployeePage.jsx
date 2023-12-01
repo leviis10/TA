@@ -5,6 +5,8 @@ import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function EditEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -13,10 +15,14 @@ function EditEmployeePage() {
   const [addressInput, setAddressInput] = useState("");
   const { employeeId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
         // Get Employee data
         const { data } = await axios.get(`/api/employees/${employeeId}`);
 
@@ -27,9 +33,12 @@ function EditEmployeePage() {
         setAddressInput(data.address);
       } catch (err) {
         navigate("/employees");
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, [employeeId, navigate]);
+  }, [employeeId, navigate, dispatch]);
 
   function changeUsernameInputHandler(e) {
     setUsernameInput(e.target.value);
@@ -59,6 +68,9 @@ function EditEmployeePage() {
         address: addressInput,
       };
 
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
       // Send put request to the server
       await axios.put(`/api/employees/${employeeId}`, employee);
 
@@ -71,9 +83,15 @@ function EditEmployeePage() {
       // redirect back to employee detail page
       navigate(`/employees/${employeeId}`);
     } catch (err) {
+      // Do something when error
       if (err.response) {
         console.error(err.response.data.message);
+        return;
       }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

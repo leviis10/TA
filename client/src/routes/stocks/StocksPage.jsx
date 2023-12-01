@@ -1,32 +1,62 @@
 import { useEffect, useState } from "react";
 import Button from "../../components/UI/Button";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function StocksPage() {
   const [stocks, setStocks] = useState([]);
   const { role } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // Fetch all stocks
         const { data } = await axios.get("/api/stocks");
+
+        // set stock state
         setStocks(data);
       } catch (err) {
-        console.error(err.response.data.message);
+        // Do something when error
+        if (err.response) {
+          console.error(err.response.data.message);
+          return;
+        }
+        console.error(err);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, []);
+  }, [dispatch]);
 
   async function deleteStockHandler(stock) {
     try {
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
+      // Delete stock from database
       await axios.delete(`/api/stocks/${stock.id}`);
 
+      // Re-fetch stock
       const { data } = await axios.get("/api/stocks");
+
+      // replace stock state
       setStocks(data);
     } catch (err) {
-      console.error(err.response.data.message);
+      // Do something when error
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      dispatch(setIsLoading(false));
     }
   }
 

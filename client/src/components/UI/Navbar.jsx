@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, NavLink } from "react-router-dom";
 import { logout } from "../../store/reducers/auth";
 import Button from "./Button";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function Navbar() {
   const { token } = useSelector((state) => state.auth);
@@ -10,9 +11,27 @@ function Navbar() {
   const navigate = useNavigate();
 
   async function logoutHandler() {
-    await axios.delete("/api/auth");
-    navigate("/");
-    dispatch(logout());
+    try {
+      // Set isLoading global state to true
+      dispatch(setIsLoading(true));
+
+      // Request DELETE request to the backend
+      await axios.delete("/api/auth");
+
+      // Log user out
+      dispatch(logout());
+
+      // Redirect to root page
+      navigate("/");
+    } catch (err) {
+      // Do something when error
+      if (err.response) {
+        console.error(err.response.data.message);
+      }
+      console.error(err);
+    } finally {
+      dispatch(setIsLoading(false));
+    }
   }
 
   function isLinkActive({ isActive }) {

@@ -1,17 +1,19 @@
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
 import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import currencyFormatter from "../../utils/currencyFormatter";
 import filterCart from "../../utils/filterCart";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function AddSellingTransactionPage() {
   const { id } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [cart, setCart] = useState([]);
   const [isAddingItem, setIsAddingItem] = useState(false);
@@ -32,22 +34,27 @@ function AddSellingTransactionPage() {
           return;
         }
 
-        // If isAddingItem === true
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // If isAddingItem === true, Request stocks from the database
         const { data } = await axios.get("/api/stocks");
 
-        // Delete stock item in data if stock item is already in cart
+        // Remove stocks if it's already in cart
         const filteredData = filterCart(data, cart);
-
-        // Set stock list
         setStocks(filteredData);
       } catch (err) {
         if (err.response) {
           console.error(err.response?.data.message);
+          return;
         }
         console.error(err);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, [isAddingItem, cart]);
+  }, [isAddingItem, cart, dispatch]);
 
   function changeSearchInputHandler(e) {
     setSearchInput(e.target.value);
@@ -59,14 +66,30 @@ function AddSellingTransactionPage() {
 
   async function searchStocksHandler(e) {
     try {
+      // Prevent form default behaviour
       e.preventDefault();
+
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
+      // Request stock list from the database
       const { data } = await axios.get(
         `/api/stocks?query=${encodeURI(searchInput)}`
       );
+
+      // Remove stock if it's already in the cart
       const filteredData = filterCart(data, cart);
       setStocks(filteredData);
     } catch (err) {
-      console.error(err.response.data.message);
+      // Do something when error
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 
@@ -123,7 +146,9 @@ function AddSellingTransactionPage() {
 
   async function addSellingTransactionHandler(e) {
     try {
+      // Prevent form default behaviour
       e.preventDefault();
+
       // If there is no item in the cart
       if (cart.length === 0) {
         console.error("Cart is empty");
@@ -136,6 +161,11 @@ function AddSellingTransactionPage() {
         seller: id,
         type: "sell",
       };
+
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
+      // Request to create new transaction group
       const { data } = await axios.post(
         "/api/transaction-groups",
         newTransactionGroup
@@ -150,18 +180,44 @@ function AddSellingTransactionPage() {
       // Redirect to all transaction page
       navigate("/transactions");
     } catch (err) {
-      console.error(err.response.data.message);
+      // Do something when error
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 
   async function removeItemFromCartHandler(stockId) {
-    setCart((previousCart) =>
-      previousCart.filter((item) => item.stockId !== stockId)
-    );
+    try {
+      // Remove item from cart
+      setCart((previousCart) =>
+        previousCart.filter((item) => item.stockId !== stockId)
+      );
 
-    const { data } = await axios.get("/api/stocks");
-    const filteredData = filterCart(data, cart);
-    setStocks(filteredData);
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
+      // Request all stock from the database
+      const { data } = await axios.get("/api/stocks");
+
+      // Remove stocks that already in the cart
+      const filteredData = filterCart(data, cart);
+      setStocks(filteredData);
+    } catch (err) {
+      // Do something when wrong
+      if (err.response) {
+        console.error(err.response.data.message);
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
+    }
   }
 
   return (

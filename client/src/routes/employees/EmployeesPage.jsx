@@ -1,36 +1,63 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import Button from "../../components/UI/Button";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const { id } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // Get all employees detail
         const { data } = await axios.get("/api/employees");
+
+        // Set employee to the state
         setEmployees(data);
       } catch (err) {
-        console.error(err.response.data.message);
+        // Do something when error
+        if (err.response) {
+          console.error(err.response.data.message);
+          return;
+        }
+        console.error(err);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, []);
+  }, [dispatch]);
 
   async function deleteEmployee(employee) {
     try {
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
       // Delete employee
       await axios.delete(`/api/employees/${employee.id}`);
 
       // Fetch employee again from database
       const { data } = await axios.get("/api/employees");
+
+      // Set new employees state
       setEmployees(data);
     } catch (err) {
+      // Do something
       if (err.response) {
         console.error(err.response.data.message);
+        return;
       }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

@@ -5,6 +5,8 @@ import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function EditSupplierPage() {
   const [supplierNameInput, setSupplierNameInput] = useState("");
@@ -12,10 +14,14 @@ function EditSupplierPage() {
   const [addressInput, setAddressInput] = useState("");
   const { supplierId } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
         // Fetch supplier data from database
         const { data } = await axios.get(`/api/suppliers/${supplierId}`);
 
@@ -24,10 +30,18 @@ function EditSupplierPage() {
         setPhoneNumberInput(data.phoneNumber);
         setAddressInput(data.address);
       } catch (err) {
-        console.error(err.response.data.message);
+        // Do something when wrong
+        if (err.response) {
+          console.error(err.response.data.message);
+          return;
+        }
+        console.error(err);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, [supplierId]);
+  }, [supplierId, dispatch]);
 
   function changeSupplierNameInputHandler(e) {
     setSupplierNameInput(e.target.value);
@@ -53,6 +67,9 @@ function EditSupplierPage() {
         address: addressInput,
       };
 
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
       // Send PUT request to API
       await axios.put(`/api/suppliers/${supplierId}`, updatedSupplier);
 
@@ -64,7 +81,15 @@ function EditSupplierPage() {
       // Redirect back to supplier detail page
       navigate(`/suppliers/${supplierId}`);
     } catch (err) {
-      console.error(err.response.data.message);
+      // Do something when error
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

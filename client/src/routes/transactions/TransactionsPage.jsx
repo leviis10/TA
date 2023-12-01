@@ -6,13 +6,19 @@ import Button from "../../components/UI/Button";
 import currencyFormatter from "../../utils/currencyFormatter";
 import { Link } from "react-router-dom";
 import countSupplier from "../../utils/countSupplier";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function TransactionsPage() {
   const [transactionGroups, setTransactionGroups] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
         // Fetch all transaction group
         const { data } = await axios.get("/api/transaction-groups");
 
@@ -22,13 +28,17 @@ function TransactionsPage() {
         // set transactionGroups state
         setTransactionGroups(modifiedData);
       } catch (err) {
+        // Do something when wrong
         if (err.response) {
           console.error(err.response.data.message);
         }
         console.error(err);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, []);
+  }, [dispatch]);
 
   function totalPriceColor(transactionType) {
     if (transactionType === "sell") {

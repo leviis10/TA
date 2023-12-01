@@ -2,23 +2,39 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Button from "../../components/UI/Button";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function SupplierDetailPage() {
   const { supplierId } = useParams();
   const [supplier, setSupplier] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // Get supplier detail
         const { data } = await axios.get(`/api/suppliers/${supplierId}`);
+
+        // set supplier state
         setSupplier(data);
       } catch (err) {
+        // Do something when error
+        if (err.response) {
+          console.error(err.response.data.message);
+        }
+        console.error(err);
         navigate("/suppliers");
-        console.error(err.response.data.message);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, [supplierId, navigate]);
+  }, [supplierId, navigate, dispatch]);
 
   return (
     <>

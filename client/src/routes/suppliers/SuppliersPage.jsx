@@ -1,32 +1,62 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import Button from "../../components/UI/Button";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function SuppliersPage() {
   const [suppliers, setSuppliers] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // Get all suppliers from database
         const { data } = await axios.get("/api/suppliers");
+
+        // set suppliers state
         setSuppliers(data);
       } catch (err) {
-        console.error(err.response.data.message);
+        // Do something when error
+        if (err.response) {
+          console.error(err.response.data.message);
+          return;
+        }
+        console.error(err);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, []);
+  }, [dispatch]);
 
   async function deleteSupplierHandler(supplier) {
     try {
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
       // Send DELETE request to the api
       await axios.delete(`/api/suppliers/${supplier.id}`);
 
       // Re-fetch suppliers data
       const { data } = await axios.get("/api/suppliers");
+
+      // Set supplier again
       setSuppliers(data);
     } catch (err) {
-      console.error(err.response.data.message);
+      // Do something when error
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

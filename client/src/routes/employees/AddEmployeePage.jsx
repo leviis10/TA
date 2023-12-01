@@ -5,6 +5,8 @@ import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function AddEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -13,6 +15,7 @@ function AddEmployeePage() {
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
   const [addressInput, setAddressInput] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function changeUsernameInputHandler(e) {
     setUsernameInput(e.target.value);
@@ -48,6 +51,9 @@ function AddEmployeePage() {
         address: addressInput,
       };
 
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
       // Add User to the database
       await axios.post("/api/employees", employee);
 
@@ -61,9 +67,14 @@ function AddEmployeePage() {
       // Redirect user to all employees page
       navigate("/employees");
     } catch (err) {
+      // Do something
       if (err.response) {
         console.error(err.response.data.message);
       }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

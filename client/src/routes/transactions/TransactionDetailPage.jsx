@@ -3,31 +3,58 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import currencyFormatter from "../../utils/currencyFormatter";
 import Button from "../../components/UI/Button";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function TransactionDetailPage() {
   const { transactionGroupId } = useParams();
   const [transactionGroup, setTransactionGroup] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // Request transaction group detail from the database
         const { data } = await axios.get(
           `/api/transaction-groups/${transactionGroupId}`
         );
         setTransactionGroup(data);
       } catch (err) {
-        console.error(err.response.data.message);
+        // Do something when wrong
+        if (err.response) {
+          console.error(err.response.data.message);
+          return;
+        }
+        console.error(err.message);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, [transactionGroupId]);
+  }, [transactionGroupId, dispatch]);
 
   async function deleteTransactionGroupHandler() {
     try {
+      // Render login spinner
+      dispatch(setIsLoading(true));
+
+      // Request to delete transaction group
       await axios.delete(`/api/transaction-groups/${transactionGroupId}`);
       navigate("/transactions");
     } catch (err) {
-      console.error(err.response.data.message);
+      // Do something when wrong
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

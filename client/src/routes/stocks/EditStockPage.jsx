@@ -5,6 +5,8 @@ import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function EditStockPage() {
   const { stockId } = useParams();
@@ -13,10 +15,15 @@ function EditStockPage() {
   const [priceInput, setPriceInput] = useState();
   const [descriptionInput, setDescriptionInput] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // Fetch stock value
         const { data } = await axios.get(`/api/stocks/${stockId}`);
         setStock(data);
 
@@ -25,10 +32,18 @@ function EditStockPage() {
         setPriceInput(data.price);
         setDescriptionInput(data.description || "");
       } catch (err) {
-        console.error(err.response.data.message);
+        // Do something when error
+        if (err.response) {
+          console.error(err.response.data.message);
+          return;
+        }
+        console.error(err);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, [stockId]);
+  }, [stockId, dispatch]);
 
   function changeDescriptionInputHandler(e) {
     setDescriptionInput(e.target.value);
@@ -44,15 +59,32 @@ function EditStockPage() {
 
   async function editStock(e) {
     try {
+      // Prevent form default behaviour
       e.preventDefault();
+
+      // Create updated stock object
       const updatedStock = {
         quantity: quantityInput,
         price: priceInput,
       };
+
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
+      // Edit stock in the database
       await axios.patch(`/api/stocks/${stockId}`, updatedStock);
+
+      // Redirect user to updated stock
       navigate(`/stocks/${stockId}`);
     } catch (err) {
-      console.error(err.response.data.message);
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

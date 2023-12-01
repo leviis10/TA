@@ -5,6 +5,8 @@ import axios from "axios";
 import Textarea from "../../components/UI/Textarea";
 import Button from "../../components/UI/Button";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function AddStockPage() {
   const [suppliers, setSuppliers] = useState([]);
@@ -14,17 +16,32 @@ function AddStockPage() {
   const [descriptionInput, setDescriptionInput] = useState("");
   const [supplierNameInput, setSupplierNameInput] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // Fetch supplier
         const { data } = await axios.get("/api/suppliers");
+
+        // Set supplier data
         setSuppliers(data);
       } catch (err) {
-        console.error(err.response.data.message);
+        // Do something when error
+        if (err.response) {
+          console.error(err.response.data.message);
+          return;
+        }
+        console.error(err);
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, []);
+  }, [dispatch]);
 
   function changeSupplierNameInput(e) {
     setSupplierNameInput(e.target.value);
@@ -60,13 +77,24 @@ function AddStockPage() {
         description: descriptionInput,
       };
 
+      // Render loading spinner
+      dispatch(setIsLoading(true));
+
       // Send POST request to the API
       const { data } = await axios.post("/api/stocks", newStock);
 
       // Redirect to the new stock detail page
       navigate(`/stocks/${data.id}`);
     } catch (err) {
-      console.error(err.response.data.message);
+      // Do something
+      if (err.response) {
+        console.error(err.response.data.message);
+        return;
+      }
+      console.error(err);
+    } finally {
+      // Remove loading spinner
+      dispatch(setIsLoading(false));
     }
   }
 

@@ -1,24 +1,41 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../components/UI/Button";
+import { setIsLoading } from "../../store/reducers/ui";
 
 function StockDetailPage() {
   const { stockId } = useParams();
   const [stock, setStock] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
       try {
+        // Render loading spinner
+        dispatch(setIsLoading(true));
+
+        // Fetch stock detail from database
         const { data } = await axios.get(`/api/stocks/${stockId}`);
+
+        // set stock state
         setStock(data);
       } catch (err) {
-        console.error(err.response.data.message);
+        if (err.response) {
+          console.error(err.response.data.message);
+        }
+        console.error(err);
+
+        // Redirect to all stocks
         navigate("/stocks");
+      } finally {
+        // Remove loading spinner
+        dispatch(setIsLoading(false));
       }
     })();
-  }, [stockId, navigate]);
+  }, [stockId, navigate, dispatch]);
 
   return (
     <>
