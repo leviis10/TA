@@ -103,7 +103,7 @@ function TransactionDetailPage() {
               {transactionGroup.Transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="grid grid-cols-4 text-center py-2"
+                  className="grid grid-cols-4 text-center py-2 items-center"
                 >
                   <p className="text-left">
                     {transaction.Stock?.name || "Deleted Stock"}

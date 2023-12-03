@@ -6,6 +6,7 @@ const catchAsync = require("../utils/catchAsync");
 const getAllEmployees = catchAsync(async (req, res) => {
   const employees = await Employee.findAll({
     attributes: { exclude: ["password"] },
+    order: [["username", "ASC"]],
   });
   res.send(employees);
 });

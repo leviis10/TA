@@ -49,12 +49,25 @@ router.post(
 router.get("/", isLoggedIn, async (req, res) => {
   const transactionGroups = await TransactionGroup.findAll({
     include: [
+      // Include Transaction model
       {
         model: Transaction,
-        include: { model: Stock, include: Supplier },
+        include: [
+          // Include Stock model
+          {
+            model: Stock,
+            include: [
+              // Include Supplier model
+              { model: Supplier },
+            ],
+          },
+        ],
       },
-      Employee,
+
+      // Include Employee model
+      { model: Employee },
     ],
+    order: [["createdAt", "DESC"]],
   });
 
   // Fill seller key with employee

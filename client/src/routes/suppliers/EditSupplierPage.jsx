@@ -139,9 +139,12 @@ function EditSupplierPage() {
           </div>
 
           {/* Button */}
-          <Button variant="amber" className="text-lg">
-            Update Supplier
-          </Button>
+          <div className="flex gap-2 text-lg">
+            <Button variant="sky" type="link" href={`/suppliers/${supplierId}`}>
+              Cancel Update
+            </Button>
+            <Button variant="amber">Update Supplier</Button>
+          </div>
         </form>
       </Card>
     </>

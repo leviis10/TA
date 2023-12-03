@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import countSupplier from "../../utils/countSupplier";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../../store/reducers/ui";
+import dateFormatter from "../../utils/dateFormatter";
+import Anchor from "../../components/UI/Anchor";
 
 function TransactionsPage() {
   const [transactionGroups, setTransactionGroups] = useState([]);
@@ -101,12 +103,9 @@ function TransactionsPage() {
                 className="grid grid-cols-6 text-center items-center py-2"
               >
                 {/* Transaction id column */}
-                <Link
-                  to={`/transactions/${transactionGroup.id}`}
-                  className="underline text-sky-700"
-                >
+                <Anchor href={`/transactions/${transactionGroup.id}`}>
                   {transactionGroup.id}
-                </Link>
+                </Anchor>
 
                 {/* Seller column */}
                 <p>
@@ -128,9 +127,7 @@ function TransactionsPage() {
                 <p>{transactionGroup.type}</p>
 
                 {/* Date column */}
-                <p>
-                  {moment(transactionGroup.createdAt).format("DD MMM YYYY")}
-                </p>
+                <p>{dateFormatter(transactionGroup.createdAt)}</p>
 
                 {/* Total price column */}
                 <p
