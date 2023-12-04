@@ -110,6 +110,7 @@ function EditEmployeePage() {
               id="username"
               value={usernameInput}
               onChange={changeUsernameInputHandler}
+              disabled
             />
           </div>
 

@@ -4,9 +4,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../components/UI/Button";
 import { useDispatch } from "react-redux";
 import { setIsLoading } from "../../store/reducers/ui";
+import currencyFormatter from "../../utils/currencyFormatter";
+import dateFormatter from "../../utils/dateFormatter";
+import Anchor from "../../components/UI/Anchor";
 
 function EmployeeDetailPage() {
   const [employee, setEmployee] = useState();
+  const [transactionGroups, setTransactionGroups] = useState([]);
   const { employeeId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,10 +22,19 @@ function EmployeeDetailPage() {
         dispatch(setIsLoading(true));
 
         // GET employee detail
-        const { data } = await axios.get(`/api/employees/${employeeId}`);
+        const { data: employee } = await axios.get(
+          `/api/employees/${employeeId}`
+        );
 
-        // Set employee detail to the state
-        setEmployee(data);
+        // GET transactionGroup for spesific employee
+        const { data: transactionGroups } = await axios.get(
+          `/api/employees/${employeeId}/transaction-groups`
+        );
+
+        // Set employee and transaction group to the state
+        setEmployee(employee);
+        setTransactionGroups(transactionGroups);
+        // setTransactionGroups(transactionGroups);
       } catch (err) {
         // Do something when error
         if (err.response) {
@@ -65,49 +78,111 @@ function EmployeeDetailPage() {
         Employee Detail
       </h1>
       {employee && (
-        <div className="divide-y divide-zinc-400 max-w-2xl mx-auto">
-          <div className="flex gap-2 mb-4">
-            <Button
-              variant="amber"
-              type="link"
-              href={`/employees/${employee.id}/edit`}
-            >
-              Edit Employee
-            </Button>
-            <Button variant="red" onClick={deleteEmployeeHandler}>
-              Delete Employee
-            </Button>
-          </div>
-          {/* id row */}
-          <div className="grid grid-cols-2 py-3">
-            <p>ID</p>
-            <p>{employee.id}</p>
+        <>
+          <div className="max-w-2xl mx-auto mb-3">
+            {/* Action section */}
+            <div className="flex gap-2 mb-4">
+              <Button
+                variant="amber"
+                type="link"
+                href={`/employees/${employee.id}/edit`}
+              >
+                Edit Employee
+              </Button>
+              <Button variant="red" onClick={deleteEmployeeHandler}>
+                Delete Employee
+              </Button>
+            </div>
+
+            {/* Employee detail section */}
+            <div className="divide-y divide-zinc-400">
+              {/* id row */}
+              <div className="grid grid-cols-2 py-3">
+                <p>ID</p>
+                <p>{employee.id}</p>
+              </div>
+
+              {/* username row */}
+              <div className="grid grid-cols-2 py-3">
+                <p>Username</p>
+                <p>{employee.username}</p>
+              </div>
+
+              {/* email row */}
+              <div className="grid grid-cols-2 py-3">
+                <p>Email</p>
+                <p>{employee.email}</p>
+              </div>
+
+              {/* phone number row */}
+              <div className="grid grid-cols-2 py-3">
+                <p>Phone Number</p>
+                <p>{employee.phoneNumber}</p>
+              </div>
+
+              {/* address row */}
+              <div className="grid grid-cols-2 py-3">
+                <p>Address</p>
+                <p>{employee.address}</p>
+              </div>
+            </div>
           </div>
 
-          {/* username row */}
-          <div className="grid grid-cols-2 py-3">
-            <p>Username</p>
-            <p>{employee.username}</p>
-          </div>
+          {/* Recent transaction section */}
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-center font-medium text-3xl mb-2">
+              Recent Transactions
+            </h2>
 
-          {/* email row */}
-          <div className="grid grid-cols-2 py-3">
-            <p>Email</p>
-            <p>{employee.email}</p>
-          </div>
+            {/* Recent transaction table */}
+            <div className="divide-y divide-zinc-400">
+              {/* Heading row */}
+              <div className="grid grid-cols-4 text-center font-medium text-lg py-1">
+                {/* Transaction id row */}
+                <h3>Transaction Id</h3>
 
-          {/* phone number row */}
-          <div className="grid grid-cols-2 py-3">
-            <p>Phone Number</p>
-            <p>{employee.phoneNumber}</p>
-          </div>
+                {/* type row */}
+                <h3>Type</h3>
 
-          {/* address row */}
-          <div className="grid grid-cols-2 py-3">
-            <p>Address</p>
-            <p>{employee.address}</p>
+                {/* Date row */}
+                <h3>Date</h3>
+
+                {/* Total price row */}
+                <h3>Total</h3>
+              </div>
+
+              {/* Content row */}
+              {transactionGroups.map((transactionGroup) => (
+                <div
+                  key={transactionGroup.id}
+                  className="grid grid-cols-4 text-center text-lg py-2 items-center"
+                >
+                  {/* Transaction id row */}
+                  <Anchor href={`/transactions/${transactionGroup.id}`}>
+                    {transactionGroup.id}
+                  </Anchor>
+
+                  {/* type row */}
+                  <h3>{transactionGroup.type}</h3>
+
+                  {/* Date row */}
+                  <h3>{dateFormatter(transactionGroup.createdAt)}</h3>
+
+                  {/* Total price row */}
+                  <h3
+                    className={`font-medium ${
+                      transactionGroup.type === "sell"
+                        ? "text-emerald-800"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {currencyFormatter(transactionGroup.totalPrice)}
+                  </h3>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );

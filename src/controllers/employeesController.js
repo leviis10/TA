@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const Employee = require("../models/Employee");
 const ExpressError = require("../utils/ExpressError");
 const catchAsync = require("../utils/catchAsync");
+const TransactionGroup = require("../models/TransactionGroup");
+const Transaction = require("../models/Transaction");
 
 const getAllEmployees = catchAsync(async (req, res) => {
   const employees = await Employee.findAll({
@@ -13,12 +15,16 @@ const getAllEmployees = catchAsync(async (req, res) => {
 
 const getEmployee = catchAsync(async (req, res) => {
   const { id } = req.params;
+
+  // Query employee
   const employee = await Employee.findByPk(id, {
     attributes: { exclude: ["password"] },
   });
   if (!employee) {
     throw new ExpressError("No employee found", 404);
   }
+
+  // Send response to the client
   res.send(employee);
 });
 

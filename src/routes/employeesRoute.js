@@ -11,6 +11,9 @@ const {
   deleteEmployee,
   updateEmployee,
 } = require("../controllers/employeesController");
+const TransactionGroup = require("../models/TransactionGroup");
+const { Op } = require("sequelize");
+const Transaction = require("../models/Transaction");
 
 const router = express.Router();
 
@@ -24,5 +27,36 @@ router
   .get(isLoggedIn, isAdmin, getEmployee)
   .put(isLoggedIn, isAdmin, validateSchema(editEmployeeSchema), updateEmployee)
   .delete(isLoggedIn, isAdmin, deleteEmployee);
+
+router.get("/:id/transaction-groups", async (req, res) => {
+  const { id } = req.params;
+
+  const transactionGroups = await TransactionGroup.findAll({
+    attributes: ["id", "type", "createdAt"],
+    where: {
+      [Op.or]: [{ buyer: id }, { seller: id }],
+    },
+    include: [
+      {
+        model: Transaction,
+        attributes: ["price", "quantity"],
+      },
+    ],
+  });
+
+  // Add totalPrice key to the transaction groups
+  const transactionGroupsWithTotalPriceKey = [];
+  for (const transactionGroup of transactionGroups) {
+    // create transaction group object
+    const transactionGroupObj = transactionGroup.toJSON();
+    transactionGroupObj.totalPrice = transactionGroupObj.Transactions.reduce(
+      (acc, transaction) => acc + transaction.quantity * transaction.price,
+      0
+    );
+    transactionGroupsWithTotalPriceKey.push(transactionGroupObj);
+  }
+
+  res.send(transactionGroupsWithTotalPriceKey);
+});
 
 module.exports = router;

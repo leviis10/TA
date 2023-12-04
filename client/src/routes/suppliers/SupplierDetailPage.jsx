@@ -111,7 +111,7 @@ function SupplierDetailPage() {
           </div>
 
           {/* stock and transaction table section */}
-          <div className="grid grid-cols-12 gap-9">
+          <div className="grid grid-cols-12 gap-9 max-w-6xl mx-auto">
             {/* Stock table */}
             <div className="divide-y divide-zinc-400 col-start-1 col-end-6">
               <h2 className="text-2xl font-medium text-center mb-1">

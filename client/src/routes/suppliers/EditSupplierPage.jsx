@@ -110,6 +110,7 @@ function EditSupplierPage() {
               id="supplierName"
               value={supplierNameInput}
               onChange={changeSupplierNameInputHandler}
+              disabled
             />
           </div>
 

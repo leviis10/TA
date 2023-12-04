@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import Button from "../../components/UI/Button";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { setIsLoading } from "../../store/reducers/ui";
+import Input from "../../components/UI/Input";
 
 function SuppliersPage() {
   const [suppliers, setSuppliers] = useState([]);
@@ -73,6 +74,10 @@ function SuppliersPage() {
           >
             <PlusIcon className="h-4 w-4" /> Add
           </Button>
+        </div>
+
+        <div className="mb-2">
+          <Input placeholder="Search for suppliers" />
         </div>
 
         {/* Suppliers table */}

@@ -65,23 +65,43 @@ function TransactionDetailPage() {
       </h1>
       {transactionGroup && (
         <>
-          <p>Transaction Id: {transactionGroup.id}</p>
-          <p>Transaction Type: {transactionGroup.type}</p>
-          <p>
-            buyer:{" "}
-            {transactionGroup.type === "sell"
-              ? "Customer"
-              : transactionGroup.Employee?.username || "Deleted Employee"}
-          </p>
-          <p>
-            seller:{" "}
-            {transactionGroup.type === "sell"
-              ? transactionGroup.seller?.username || "Deleted employee"
-              : "Supplier"}
-          </p>
+          {/* Transaction detail */}
+          <div className="max-w-3xl mx-auto divide-y divide-zinc-400">
+            {/* Transaction id row */}
+            <div className="grid grid-cols-2 text-lg py-3">
+              <h3 className="font-medium">Transaction Id</h3>
+              <p>{transactionGroup.id}</p>
+            </div>
 
-          {/* Items Table */}
-          <div className="max-w-2xl mx-auto">
+            {/* Transaction type row */}
+            <div className="grid grid-cols-2 text-lg py-3">
+              <h3 className="font-medium">Transaction Type</h3>
+              <p>{transactionGroup.type}</p>
+            </div>
+
+            {/* Buyer row */}
+            <div className="grid grid-cols-2 text-lg py-3">
+              <h3 className="font-medium">Buyer</h3>
+              <p>
+                {transactionGroup.type === "sell"
+                  ? "Customer"
+                  : transactionGroup.Employee?.username || "Deleted Employee"}
+              </p>
+            </div>
+
+            {/* Seller row */}
+            <div className="grid grid-cols-2 text-lg py-3">
+              <h3 className="font-medium">Seller</h3>
+              <p>
+                {transactionGroup.type === "sell"
+                  ? transactionGroup.seller?.username || "Deleted employee"
+                  : "Supplier"}
+              </p>
+            </div>
+          </div>
+
+          {/* Items Detail */}
+          <div className="max-w-3xl mx-auto">
             <div className="flex justify-end">
               <Button variant="red" onClick={deleteTransactionGroupHandler}>
                 Delete

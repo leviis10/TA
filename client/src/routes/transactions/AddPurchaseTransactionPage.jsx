@@ -116,6 +116,7 @@ function AddPurchaseTransactionPage() {
     setSelectedStock(null);
     setQuantityInput(1);
     setIsAddingItem(false);
+    setSearchInput("");
   }
 
   function addItemHandler() {
@@ -143,6 +144,9 @@ function AddPurchaseTransactionPage() {
 
     // Close add item modal
     cancelAddStockHandler();
+
+    // Reset stock search input
+    setSearchInput("");
   }
 
   async function addPurchaseTransactionHandler(e) {

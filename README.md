@@ -2,6 +2,9 @@
 
 semangat mengerjakan tugas akhir levi
 
-## Thing To Do
+## Changed things
 
-- Add recent transaction in employee detail page
+- add employee search input
+- employee username update disable
+- add supplier search input
+- add stock search input

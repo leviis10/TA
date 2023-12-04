@@ -116,6 +116,7 @@ function AddSellingTransactionPage() {
     setSelectedStock(null);
     setQuantityInput(1);
     setIsAddingItem(false);
+    setSearchInput("");
   }
 
   function addItemHandler() {
@@ -142,6 +143,9 @@ function AddSellingTransactionPage() {
 
     // Close add item modal
     cancelAddStockHandler();
+
+    // Reset stock search input
+    setSearchInput("");
   }
 
   async function addSellingTransactionHandler(e) {

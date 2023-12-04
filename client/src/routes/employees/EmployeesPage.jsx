@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import Button from "../../components/UI/Button";
 import { setIsLoading } from "../../store/reducers/ui";
+import Input from "../../components/UI/Input";
 
 function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
@@ -74,6 +75,11 @@ function EmployeesPage() {
           >
             <PlusIcon className="h-4 w-4" /> Add
           </Button>
+        </div>
+
+        {/* Employee list table */}
+        <div className="mb-2">
+          <Input placeholder="Search for employees" />
         </div>
         <div className="divide-y divide-zinc-400 ">
           <div className="grid grid-cols-2">

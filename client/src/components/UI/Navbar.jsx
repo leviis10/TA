@@ -4,9 +4,10 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { logout } from "../../store/reducers/auth";
 import Button from "./Button";
 import { setIsLoading } from "../../store/reducers/ui";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 function Navbar() {
-  const { token } = useSelector((state) => state.auth);
+  const { token, username } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -45,28 +46,32 @@ function Navbar() {
   return (
     <nav className="bg-sky-400 py-3 mb-5">
       <div className="container flex items-center justify-between mx-auto">
-        <NavLink to={"/"} className="text-xl">
+        <NavLink to="/transactions" className="text-xl">
           SITOBASM
         </NavLink>
         {token && (
           <ul className="flex gap-3 items-center">
+            <li className="flex gap-1 px-3 py-1 rounded-md border-2">
+              <UserCircleIcon className="h-6 w-6" />
+              <p>{username}</p>
+            </li>
             <li>
-              <NavLink to={"/transactions"} className={isLinkActive}>
+              <NavLink to="/transactions" className={isLinkActive}>
                 Transaction
               </NavLink>
             </li>
             <li>
-              <NavLink to={"/employees"} className={isLinkActive}>
+              <NavLink to="/employees" className={isLinkActive}>
                 Employee
               </NavLink>
             </li>
             <li>
-              <NavLink to={"/suppliers"} className={isLinkActive}>
+              <NavLink to="/suppliers" className={isLinkActive}>
                 Supplier
               </NavLink>
             </li>
             <li>
-              <NavLink to={"/stocks"} className={isLinkActive}>
+              <NavLink to="/stocks" className={isLinkActive}>
                 Stock
               </NavLink>
             </li>

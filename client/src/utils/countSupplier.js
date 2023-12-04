@@ -9,7 +9,7 @@ function countSupplier(transactionGroups) {
     // Collect all supplier id transaction
     const supplierIds = [];
     for (const transaction of transactionGroup.Transactions) {
-      supplierIds.push(transaction.id);
+      supplierIds.push(transaction.Stock.supplier);
     }
 
     // Create set from all supplier id
