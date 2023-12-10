@@ -167,7 +167,7 @@ function AddStockPage() {
           {/* Description field */}
           <div className="flex flex-col gap-2 mb-4">
             <label htmlFor="description" className="text-lg">
-              Address:
+              Description:
             </label>
             <Textarea
               id="description"

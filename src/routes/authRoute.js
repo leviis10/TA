@@ -1,7 +1,6 @@
 const express = require("express");
-
 const validateSchema = require("../middlewares/validateSchema");
-const loginSchema = require("../schemas/loginSchema");
+const loginSchema = require("../schemas/authSchemas/loginSchema");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const {
   loginEmployee,

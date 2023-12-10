@@ -2,9 +2,13 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 const express = require("express");
-
 const cookieParser = require("cookie-parser");
 const sequelize = require("./db");
+const Supplier = require("./models/Supplier");
+const Stock = require("./models/Stock");
+const Transaction = require("./models/Transaction");
+const TransactionGroup = require("./models/TransactionGroup");
+const Employee = require("./models/Employee");
 const authRoute = require("./routes/authRoute");
 const employeesRoute = require("./routes/employeesRoute");
 const suppliersRoute = require("./routes/suppliersRoute");
@@ -12,11 +16,6 @@ const transactionsRoute = require("./routes/transactionsRoute");
 const stocksRoute = require("./routes/stocksRoute");
 const transactionGroupRoute = require("./routes/transactionGroupsRoute");
 const ExpressError = require("./utils/ExpressError");
-const Supplier = require("./models/Supplier");
-const Stock = require("./models/Stock");
-const Transaction = require("./models/Transaction");
-const TransactionGroup = require("./models/TransactionGroup");
-const Employee = require("./models/Employee");
 
 const app = express();
 
@@ -79,9 +78,9 @@ app.all("*", (req, res) => {
 
 app.use((err, req, res, next) => {
   const { message = "Something went wrong", statusCode = 500 } = err;
-  console.error("=".repeat(10));
-  console.error(err);
-  console.error("=".repeat(10));
+  console.error("=".repeat(20));
+  console.error(err.message);
+  console.error("=".repeat(20));
   res.status(statusCode).send({ message, statusCode });
 });
 

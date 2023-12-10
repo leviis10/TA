@@ -4,6 +4,7 @@ const ExpressError = require("../utils/ExpressError");
 const catchAsync = require("../utils/catchAsync");
 const TransactionGroup = require("../models/TransactionGroup");
 const Transaction = require("../models/Transaction");
+const { Op } = require("sequelize");
 
 const getAllEmployees = catchAsync(async (req, res) => {
   const employees = await Employee.findAll({
@@ -50,10 +51,42 @@ const updateEmployee = catchAsync(async (req, res) => {
   res.send({ message: "Successfully updated a user" });
 });
 
+const getEmployeeTransactionGroups = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const transactionGroups = await TransactionGroup.findAll({
+    attributes: ["id", "type", "createdAt"],
+    where: {
+      [Op.or]: [{ buyer: id }, { seller: id }],
+    },
+    include: [
+      {
+        model: Transaction,
+        attributes: ["price", "quantity"],
+      },
+    ],
+  });
+
+  // Add totalPrice key to the transaction groups
+  const transactionGroupsWithTotalPriceKey = [];
+  for (const transactionGroup of transactionGroups) {
+    // create transaction group object
+    const transactionGroupObj = transactionGroup.toJSON();
+    transactionGroupObj.totalPrice = transactionGroupObj.Transactions.reduce(
+      (acc, transaction) => acc + transaction.quantity * transaction.price,
+      0
+    );
+    transactionGroupsWithTotalPriceKey.push(transactionGroupObj);
+  }
+
+  res.send(transactionGroupsWithTotalPriceKey);
+});
+
 module.exports = {
   getAllEmployees,
   getEmployee,
   createEmployee,
   deleteEmployee,
   updateEmployee,
+  getEmployeeTransactionGroups,
 };
