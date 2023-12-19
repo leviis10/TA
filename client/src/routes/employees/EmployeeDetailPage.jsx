@@ -1,75 +1,56 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Anchor from "../../components/UI/Anchor";
 import Button from "../../components/UI/Button";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../../store/reducers/ui";
+import useLoading from "../../hooks/useLoading";
 import currencyFormatter from "../../utils/currencyFormatter";
 import dateFormatter from "../../utils/dateFormatter";
-import Anchor from "../../components/UI/Anchor";
 
 function EmployeeDetailPage() {
   const [employee, setEmployee] = useState();
   const [transactionGroups, setTransactionGroups] = useState([]);
   const { employeeId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const loading = useLoading();
 
   useEffect(() => {
     (async function () {
-      try {
-        // Render loading spinner
-        dispatch(setIsLoading(true));
+      await loading({
+        async fn() {
+          // GET employee detail
+          const { data: employee } = await axios.get(
+            `/api/employees/${employeeId}`
+          );
 
-        // GET employee detail
-        const { data: employee } = await axios.get(
-          `/api/employees/${employeeId}`
-        );
+          // GET transactionGroup for spesific employee
+          const { data: transactionGroups } = await axios.get(
+            `/api/employees/${employeeId}/transaction-groups`
+          );
 
-        // GET transactionGroup for spesific employee
-        const { data: transactionGroups } = await axios.get(
-          `/api/employees/${employeeId}/transaction-groups`
-        );
+          // Set employee and transaction group to the state
+          setEmployee(employee);
 
-        // Set employee and transaction group to the state
-        setEmployee(employee);
-        setTransactionGroups(transactionGroups);
-        // setTransactionGroups(transactionGroups);
-      } catch (err) {
-        // Do something when error
-        if (err.response) {
-          console.error(err.response.data.message);
-        }
-        console.error(err);
-        navigate("/employees");
-      } finally {
-        // Remove loading spinner
-        dispatch(setIsLoading(false));
-      }
+          // setTransactionGroups(transactionGroups);
+          setTransactionGroups(transactionGroups);
+        },
+        errorFn() {
+          navigate("/employees");
+        },
+      });
     })();
-  }, [employeeId, navigate, dispatch]);
+  }, [employeeId, navigate, loading]);
 
   async function deleteEmployeeHandler() {
-    try {
-      // Render loading spinner
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Delete employee
+        await axios.delete(`/api/employees/${employeeId}`);
 
-      // Delete employee
-      await axios.delete(`/api/employees/${employeeId}`);
-
-      // Redirect to all employees page
-      navigate("/employees");
-    } catch (err) {
-      // Do something when error
-      if (err.response) {
-        console.error(err.response.data.message);
-        return;
-      }
-      console.error(err);
-    } finally {
-      // Remove loading spinner
-      dispatch(setIsLoading(false));
-    }
+        // Redirect to all employees page
+        navigate("/employees");
+      },
+    });
   }
 
   return (
@@ -134,53 +115,65 @@ function EmployeeDetailPage() {
               Recent Transactions
             </h2>
 
-            {/* Recent transaction table */}
-            <div className="divide-y divide-zinc-400">
-              {/* Heading row */}
-              <div className="grid grid-cols-4 text-center font-medium text-lg py-1">
-                {/* Transaction id row */}
-                <h3>Transaction Id</h3>
+            {/* If there is no transaction */}
+            {transactionGroups.length === 0 && (
+              <p className="text-center text-lg">
+                There is no transaction yet!
+              </p>
+            )}
 
-                {/* type row */}
-                <h3>Type</h3>
+            {/* If there is transaction */}
+            {transactionGroups.length > 0 && (
+              <>
+                {/* Recent transaction table */}
+                <div className="divide-y divide-zinc-400">
+                  {/* Heading row */}
+                  <div className="grid grid-cols-4 text-center font-medium text-lg py-1">
+                    {/* Transaction id row */}
+                    <h3>Transaction Id</h3>
 
-                {/* Date row */}
-                <h3>Date</h3>
+                    {/* type row */}
+                    <h3>Type</h3>
 
-                {/* Total price row */}
-                <h3>Total</h3>
-              </div>
+                    {/* Date row */}
+                    <h3>Date</h3>
 
-              {/* Content row */}
-              {transactionGroups.map((transactionGroup) => (
-                <div
-                  key={transactionGroup.id}
-                  className="grid grid-cols-4 text-center text-lg py-2 items-center"
-                >
-                  {/* Transaction id row */}
-                  <Anchor href={`/transactions/${transactionGroup.id}`}>
-                    {transactionGroup.id}
-                  </Anchor>
+                    {/* Total price row */}
+                    <h3>Total</h3>
+                  </div>
 
-                  {/* type row */}
-                  <h3>{transactionGroup.type}</h3>
+                  {/* Content row */}
+                  {transactionGroups.map((transactionGroup) => (
+                    <div
+                      key={transactionGroup.id}
+                      className="grid grid-cols-4 text-center text-lg py-2 items-center"
+                    >
+                      {/* Transaction id row */}
+                      <Anchor href={`/transactions/${transactionGroup.id}`}>
+                        {transactionGroup.id}
+                      </Anchor>
 
-                  {/* Date row */}
-                  <h3>{dateFormatter(transactionGroup.createdAt)}</h3>
+                      {/* type row */}
+                      <h3>{transactionGroup.type}</h3>
 
-                  {/* Total price row */}
-                  <h3
-                    className={`font-medium ${
-                      transactionGroup.type === "sell"
-                        ? "text-emerald-800"
-                        : "text-red-500"
-                    }`}
-                  >
-                    {currencyFormatter(transactionGroup.totalPrice)}
-                  </h3>
+                      {/* Date row */}
+                      <h3>{dateFormatter(transactionGroup.createdAt)}</h3>
+
+                      {/* Total price row */}
+                      <h3
+                        className={`font-medium ${
+                          transactionGroup.type === "sell"
+                            ? "text-emerald-800"
+                            : "text-red-500"
+                        }`}
+                      >
+                        {currencyFormatter(transactionGroup.totalPrice)}
+                      </h3>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
         </>
       )}

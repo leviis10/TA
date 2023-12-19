@@ -5,8 +5,7 @@ import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../../store/reducers/ui";
+import useLoading from "../../hooks/useLoading";
 
 function AddEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -15,7 +14,7 @@ function AddEmployeePage() {
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
   const [addressInput, setAddressInput] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const loading = useLoading();
 
   function changeUsernameInputHandler(e) {
     setUsernameInput(e.target.value);
@@ -38,44 +37,34 @@ function AddEmployeePage() {
   }
 
   async function addEmployee(e) {
-    try {
-      // Prevent form default behaviour
-      e.preventDefault();
+    // Prevent form default behaviour
+    e.preventDefault();
 
-      // Create employee object
-      const employee = {
-        username: usernameInput,
-        password: passwordInput,
-        email: emailInput,
-        phoneNumber: phoneNumberInput,
-        address: addressInput,
-      };
+    // Create employee object
+    const employee = {
+      username: usernameInput,
+      password: passwordInput,
+      email: emailInput,
+      phoneNumber: phoneNumberInput,
+      address: addressInput,
+    };
 
-      // Render loading spinner
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Add User to the database
+        const { data } = await axios.post("/api/employees", employee);
 
-      // Add User to the database
-      await axios.post("/api/employees", employee);
+        // Clear all input field
+        setUsernameInput("");
+        setPasswordInput("");
+        setEmailInput("");
+        setPhoneNumberInput("");
+        setAddressInput("");
 
-      // Clear all input field
-      setUsernameInput("");
-      setPasswordInput("");
-      setEmailInput("");
-      setPhoneNumberInput("");
-      setAddressInput("");
-
-      // Redirect user to all employees page
-      navigate("/employees");
-    } catch (err) {
-      // Do something
-      if (err.response) {
-        console.error(err.response.data.message);
-      }
-      console.error(err);
-    } finally {
-      // Remove loading spinner
-      dispatch(setIsLoading(false));
-    }
+        // Redirect user to all employees page
+        navigate(`/employees/${data.id}`);
+      },
+    });
   }
 
   return (

@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
-import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../../store/reducers/ui";
+import useLoading from "../../hooks/useLoading";
 
 function EditSupplierPage() {
   const [supplierNameInput, setSupplierNameInput] = useState("");
@@ -14,34 +13,23 @@ function EditSupplierPage() {
   const [addressInput, setAddressInput] = useState("");
   const { supplierId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const loading = useLoading();
 
   useEffect(() => {
     (async function () {
-      try {
-        // Render loading spinner
-        dispatch(setIsLoading(true));
+      await loading({
+        async fn() {
+          // Fetch supplier data from database
+          const { data } = await axios.get(`/api/suppliers/${supplierId}`);
 
-        // Fetch supplier data from database
-        const { data } = await axios.get(`/api/suppliers/${supplierId}`);
-
-        // Fill form with the data from the database
-        setSupplierNameInput(data.name);
-        setPhoneNumberInput(data.phoneNumber);
-        setAddressInput(data.address);
-      } catch (err) {
-        // Do something when wrong
-        if (err.response) {
-          console.error(err.response.data.message);
-          return;
-        }
-        console.error(err);
-      } finally {
-        // Remove loading spinner
-        dispatch(setIsLoading(false));
-      }
+          // Fill form with the data from the database
+          setSupplierNameInput(data.name);
+          setPhoneNumberInput(data.phoneNumber);
+          setAddressInput(data.address);
+        },
+      });
     })();
-  }, [supplierId, dispatch]);
+  }, [loading, supplierId]);
 
   function changeSupplierNameInputHandler(e) {
     setSupplierNameInput(e.target.value);
@@ -56,41 +44,30 @@ function EditSupplierPage() {
   }
 
   async function editSupplier(e) {
-    try {
-      // Prevent form default behaviour
-      e.preventDefault();
+    // Prevent form default behaviour
+    e.preventDefault();
 
-      // Create updated supplier object
-      const updatedSupplier = {
-        name: supplierNameInput,
-        phoneNumber: phoneNumberInput,
-        address: addressInput,
-      };
+    // Create updated supplier object
+    const updatedSupplier = {
+      name: supplierNameInput,
+      phoneNumber: phoneNumberInput,
+      address: addressInput,
+    };
 
-      // Render loading spinner
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Send PUT request to API
+        await axios.put(`/api/suppliers/${supplierId}`, updatedSupplier);
 
-      // Send PUT request to API
-      await axios.put(`/api/suppliers/${supplierId}`, updatedSupplier);
+        // Clear input
+        setSupplierNameInput("");
+        setPhoneNumberInput("");
+        setAddressInput("");
 
-      // Clear input
-      setSupplierNameInput("");
-      setPhoneNumberInput("");
-      setAddressInput("");
-
-      // Redirect back to supplier detail page
-      navigate(`/suppliers/${supplierId}`);
-    } catch (err) {
-      // Do something when error
-      if (err.response) {
-        console.error(err.response.data.message);
-        return;
-      }
-      console.error(err);
-    } finally {
-      // Remove loading spinner
-      dispatch(setIsLoading(false));
-    }
+        // Redirect back to supplier detail page
+        navigate(`/suppliers/${supplierId}`);
+      },
+    });
   }
 
   return (

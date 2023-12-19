@@ -11,14 +11,28 @@ semangat mengerjakan tugas akhir levi
 
 ## To do things
 
-- Move delete detail transaction button above the transaction detail
-- When user add new transaction redirect user to '/transactions/:id' instead of '/transactions'
-- Check when user add new employee, redirect user to '/employees/:id'
-- Check when user update employee, redirect user to '/employees/:id'
-- Check when user add new supplier, redirect user to '/suppliers/:id'
-- Check when user update supplier, redirect user to '/suppliers/:id'
-- Check when user add new stock, redirect user to '/stocks/:id'
-- Check when user update stock, redirect user to '/stocks/:id'
-- Check backend for input with textarea, expect to be escaped
-- Hide some route from regular employee
-- Improve error handler UI
+- ~~Move delete detail transaction button above the transaction detail~~
+- ~~When user add new transaction redirect user to '/transactions/:id' instead of '/transactions'~~
+- ~~Check when user add new employee, redirect user to '/employees/:id'~~
+- ~~Check when user update employee, redirect user to '/employees/:id'~~
+- ~~Check when user add new supplier, redirect user to '/suppliers/:id'~~
+- ~~Check when user update supplier, redirect user to '/suppliers/:id'~~
+- ~~Check when user add new stock, redirect user to '/stocks/:id'~~
+- ~~Check when user update stock, redirect user to '/stocks/:id'~~
+- ~~Hide some route from regular employee~~
+- ~~Improve error handler UI~~
+- set error alert if user go to forbidden routes
+- refactor protected routes with custom hooks
+- ~~refactor loading state with custom hooks~~
+
+### Features
+
+- CRUD employee
+- CRUD supplier
+- CRUD stock
+- CRD transaction
+
+### Protected routes
+
+- employees (only for admin)
+- suppliers (only for admin)

@@ -1,38 +1,33 @@
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import useLoading from "../../hooks/useLoading";
 import { login } from "../../store/reducers/auth";
-import { setIsLoading } from "../../store/reducers/ui";
-import Input from "../UI/Input";
 import Card from "../UI/Card";
+import Input from "../UI/Input";
 
 function LoginModal() {
   const [usernameInput, setUsernameInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const dispatch = useDispatch();
+  const loading = useLoading();
 
   async function loginHandler(e) {
-    try {
-      // Prevent form default behavioiur
-      e.preventDefault();
+    // Prevent form default behavioiur
+    e.preventDefault();
 
-      // Change isLoading global state
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Send POST request to the backend
+        const { data } = await axios.post("/api/auth", {
+          username: usernameInput,
+          password: passwordInput,
+        });
 
-      // Send POST request to the backend
-      const { data } = await axios.post("/api/auth", {
-        username: usernameInput,
-        password: passwordInput,
-      });
-
-      // Log user in
-      dispatch(login(data));
-    } catch (err) {
-      // Do something
-      console.error(err.response.data.message);
-    } finally {
-      dispatch(setIsLoading(false));
-    }
+        // Log user in
+        dispatch(login(data));
+      },
+    });
   }
 
   function changeUsernameHandler(e) {

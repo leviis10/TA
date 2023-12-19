@@ -5,9 +5,11 @@ const addEmployeeSchema = checkSchema(
     username: {
       notEmpty: true,
       trim: true,
+      errorMessage: "Username can't be empty",
     },
     password: {
       notEmpty: true,
+      errorMessage: "Password can't be empty",
     },
     email: {
       notEmpty: true,
@@ -18,7 +20,7 @@ const addEmployeeSchema = checkSchema(
     phoneNumber: {
       notEmpty: true,
       isMobilePhone: true,
-      errorMessage: "Phone number can't include word",
+      errorMessage: "Invalid Phone Number",
     },
     address: {
       notEmpty: true,

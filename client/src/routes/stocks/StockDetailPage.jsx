@@ -1,59 +1,42 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import Button from "../../components/UI/Button";
-import { setIsLoading } from "../../store/reducers/ui";
-import dateFormatter from "../../utils/dateFormatter";
+import { useNavigate, useParams } from "react-router-dom";
 import Anchor from "../../components/UI/Anchor";
+import Button from "../../components/UI/Button";
+import useLoading from "../../hooks/useLoading";
+import dateFormatter from "../../utils/dateFormatter";
 
 function StockDetailPage() {
   const { stockId } = useParams();
   const [stock, setStock] = useState();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const loading = useLoading();
 
   useEffect(() => {
     (async function () {
-      try {
-        // Render loading spinner
-        dispatch(setIsLoading(true));
+      await loading({
+        async fn() {
+          // Fetch stock detail from database
+          const { data } = await axios.get(`/api/stocks/${stockId}`);
 
-        // Fetch stock detail from database
-        const { data } = await axios.get(`/api/stocks/${stockId}`);
-
-        // set stock state
-        setStock(data);
-      } catch (err) {
-        if (err.response) {
-          console.error(err.response.data.message);
-        }
-        console.error(err);
-
-        // Redirect to all stocks
-        navigate("/stocks");
-      } finally {
-        // Remove loading spinner
-        dispatch(setIsLoading(false));
-      }
+          // set stock state
+          setStock(data);
+        },
+        errorFn() {
+          // Redirect to all stocks
+          navigate("/stocks");
+        },
+      });
     })();
-  }, [stockId, navigate, dispatch]);
+  }, [loading, stockId, navigate]);
 
   async function deleteStockHandler() {
-    try {
-      dispatch(setIsLoading(true));
-      await axios.delete(`/api/stocks/${stockId}`);
-      navigate("/stocks");
-    } catch (err) {
-      // Do something when error
-      if (err.response) {
-        console.error(err.response.data.message);
-        return;
-      }
-      console.error(err);
-    } finally {
-      dispatch(setIsLoading(false));
-    }
+    await loading({
+      async fn() {
+        await axios.delete(`/api/stocks/${stockId}`);
+        navigate("/stocks");
+      },
+    });
   }
 
   return (

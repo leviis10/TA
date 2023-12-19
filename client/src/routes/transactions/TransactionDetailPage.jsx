@@ -1,61 +1,38 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import currencyFormatter from "../../utils/currencyFormatter";
 import Button from "../../components/UI/Button";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../../store/reducers/ui";
+import useLoading from "../../hooks/useLoading";
+import currencyFormatter from "../../utils/currencyFormatter";
 
 function TransactionDetailPage() {
   const { transactionGroupId } = useParams();
   const [transactionGroup, setTransactionGroup] = useState(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const loading = useLoading();
 
   useEffect(() => {
     (async function () {
-      try {
-        // Render loading spinner
-        dispatch(setIsLoading(true));
-
-        // Request transaction group detail from the database
-        const { data } = await axios.get(
-          `/api/transaction-groups/${transactionGroupId}`
-        );
-        setTransactionGroup(data);
-      } catch (err) {
-        // Do something when wrong
-        if (err.response) {
-          console.error(err.response.data.message);
-          return;
-        }
-        console.error(err.message);
-      } finally {
-        // Remove loading spinner
-        dispatch(setIsLoading(false));
-      }
+      await loading({
+        async fn() {
+          // Request transaction group detail from the database
+          const { data } = await axios.get(
+            `/api/transaction-groups/${transactionGroupId}`
+          );
+          setTransactionGroup(data);
+        },
+      });
     })();
-  }, [transactionGroupId, dispatch]);
+  }, [loading, transactionGroupId]);
 
   async function deleteTransactionGroupHandler() {
-    try {
-      // Render login spinner
-      dispatch(setIsLoading(true));
-
-      // Request to delete transaction group
-      await axios.delete(`/api/transaction-groups/${transactionGroupId}`);
-      navigate("/transactions");
-    } catch (err) {
-      // Do something when wrong
-      if (err.response) {
-        console.error(err.response.data.message);
-        return;
-      }
-      console.error(err);
-    } finally {
-      // Remove loading spinner
-      dispatch(setIsLoading(false));
-    }
+    await loading({
+      async fn() {
+        // Request to delete transaction group
+        await axios.delete(`/api/transaction-groups/${transactionGroupId}`);
+        navigate("/transactions");
+      },
+    });
   }
 
   return (
@@ -64,9 +41,17 @@ function TransactionDetailPage() {
         Transaction Detail
       </h1>
       {transactionGroup && (
-        <>
+        <div className="max-w-3xl mx-auto">
+          {/* Action button */}
+          <Button
+            variant="red"
+            onClick={deleteTransactionGroupHandler}
+            className="mb-4"
+          >
+            Delete Transaction
+          </Button>
           {/* Transaction detail */}
-          <div className="max-w-3xl mx-auto divide-y divide-zinc-400">
+          <div className="divide-y divide-zinc-400">
             {/* Transaction id row */}
             <div className="grid grid-cols-2 text-lg py-3">
               <h3 className="font-medium">Transaction Id</h3>
@@ -95,18 +80,13 @@ function TransactionDetailPage() {
               <p>
                 {transactionGroup.type === "sell"
                   ? transactionGroup.seller?.username || "Deleted employee"
-                  : "Supplier"}
+                  : "supplier"}
               </p>
             </div>
           </div>
 
           {/* Items Detail */}
           <div className="max-w-3xl mx-auto">
-            <div className="flex justify-end">
-              <Button variant="red" onClick={deleteTransactionGroupHandler}>
-                Delete
-              </Button>
-            </div>
             <h2 className="text-3xl text-center font-semibold mb-2">
               Items Detail
             </h2>
@@ -153,7 +133,7 @@ function TransactionDetailPage() {
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );

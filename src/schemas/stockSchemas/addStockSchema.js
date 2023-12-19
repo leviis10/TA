@@ -2,13 +2,15 @@ const { checkSchema } = require("express-validator");
 
 const addStockSchema = checkSchema(
   {
-    supplier: {
-      isUUID: { options: 4 },
-      errorMessage: "Invalid Supplier Id",
-    },
     name: {
       notEmpty: true,
       isString: true,
+      trim: true,
+      errorMessage: "Invalid Stock name",
+    },
+    supplier: {
+      isUUID: { options: 4 },
+      errorMessage: "Invalid Supplier name",
     },
     quantity: {
       toInt: true,
@@ -19,9 +21,6 @@ const addStockSchema = checkSchema(
       toInt: true,
       isInt: { options: { min: 0 } },
       errorMessage: "Price must be greater than or equal to 0",
-    },
-    description: {
-      escape: true,
     },
   },
   ["body"]

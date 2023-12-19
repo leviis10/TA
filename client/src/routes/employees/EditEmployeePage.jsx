@@ -1,12 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../../store/reducers/ui";
+import useLoading from "../../hooks/useLoading";
+import { setAlert, setIsLoading } from "../../store/reducers/ui";
 
 function EditEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -16,29 +17,27 @@ function EditEmployeePage() {
   const { employeeId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const loading = useLoading();
 
   useEffect(() => {
     (async function () {
-      try {
-        // Render loading spinner
-        dispatch(setIsLoading(true));
+      await loading({
+        async fn() {
+          // Get Employee data
+          const { data } = await axios.get(`/api/employees/${employeeId}`);
 
-        // Get Employee data
-        const { data } = await axios.get(`/api/employees/${employeeId}`);
-
-        // Pre fill form with employee data
-        setUsernameInput(data.username);
-        setEmailInput(data.email);
-        setPhoneNumberInput(data.phoneNumber);
-        setAddressInput(data.address);
-      } catch (err) {
-        navigate("/employees");
-      } finally {
-        // Remove loading spinner
-        dispatch(setIsLoading(false));
-      }
+          // Pre fill form with employee data
+          setUsernameInput(data.username);
+          setEmailInput(data.email);
+          setPhoneNumberInput(data.phoneNumber);
+          setAddressInput(data.address);
+        },
+        errorFn() {
+          navigate("/employees");
+        },
+      });
     })();
-  }, [employeeId, navigate, dispatch]);
+  }, [loading, employeeId, navigate]);
 
   function changeUsernameInputHandler(e) {
     setUsernameInput(e.target.value);
@@ -57,42 +56,31 @@ function EditEmployeePage() {
   }
 
   async function editEmployee(e) {
-    try {
-      e.preventDefault();
+    e.preventDefault();
 
-      // Create edited employee object
-      const employee = {
-        username: usernameInput,
-        email: emailInput,
-        phoneNumber: phoneNumberInput,
-        address: addressInput,
-      };
+    // Create edited employee object
+    const employee = {
+      username: usernameInput,
+      email: emailInput,
+      phoneNumber: phoneNumberInput,
+      address: addressInput,
+    };
 
-      // Render loading spinner
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Send put request to the server
+        await axios.put(`/api/employees/${employeeId}`, employee);
 
-      // Send put request to the server
-      await axios.put(`/api/employees/${employeeId}`, employee);
+        // Clear all input
+        setUsernameInput("");
+        setEmailInput("");
+        setPhoneNumberInput("");
+        setAddressInput("");
 
-      // Clear all input
-      setUsernameInput("");
-      setEmailInput("");
-      setPhoneNumberInput("");
-      setAddressInput("");
-
-      // redirect back to employee detail page
-      navigate(`/employees/${employeeId}`);
-    } catch (err) {
-      // Do something when error
-      if (err.response) {
-        console.error(err.response.data.message);
-        return;
-      }
-      console.error(err);
-    } finally {
-      // Remove loading spinner
-      dispatch(setIsLoading(false));
-    }
+        // redirect back to employee detail page
+        navigate(`/employees/${employeeId}`);
+      },
+    });
   }
 
   return (

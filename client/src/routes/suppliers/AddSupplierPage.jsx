@@ -1,19 +1,18 @@
+import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../../store/reducers/ui";
+import useLoading from "../../hooks/useLoading";
 
 function AddSupplierPage() {
   const [supplierNameInput, setSupplierNameInput] = useState("");
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
   const [addressInput, setAddressInput] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const loading = useLoading();
 
   function changeSupplierNameInputHandler(e) {
     setSupplierNameInput(e.target.value);
@@ -28,41 +27,30 @@ function AddSupplierPage() {
   }
 
   async function addSupplier(e) {
-    try {
-      // Prevent form default behaviour
-      e.preventDefault();
+    // Prevent form default behaviour
+    e.preventDefault();
 
-      // Create new supplier object
-      const supplier = {
-        name: supplierNameInput,
-        phoneNumber: phoneNumberInput,
-        address: addressInput,
-      };
+    // Create new supplier object
+    const supplier = {
+      name: supplierNameInput,
+      phoneNumber: phoneNumberInput,
+      address: addressInput,
+    };
 
-      // Render loading spinner
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Send request to the API
+        const { data } = await axios.post("/api/suppliers", supplier);
 
-      // Send request to the API
-      const { data } = await axios.post("/api/suppliers", supplier);
+        // Clear form
+        setSupplierNameInput("");
+        setPhoneNumberInput("");
+        setAddressInput("");
 
-      // Clear form
-      setSupplierNameInput("");
-      setPhoneNumberInput("");
-      setAddressInput("");
-
-      // Redirect to new supplier detail page
-      navigate(`/suppliers/${data.id}`);
-    } catch (err) {
-      // Do something when error
-      if (err.response) {
-        console.error(err.response.data.message);
-        return;
-      }
-      console.error(err);
-    } finally {
-      // Remove loading spinner
-      dispatch(setIsLoading(false));
-    }
+        // Redirect to new supplier detail page
+        navigate(`/suppliers/${data.id}`);
+      },
+    });
   }
 
   return (

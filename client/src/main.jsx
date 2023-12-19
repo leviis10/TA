@@ -18,11 +18,11 @@ import AddSupplierPage from "./routes/suppliers/AddSupplierPage.jsx";
 import EditSupplierPage from "./routes/suppliers/EditSupplierPage.jsx";
 import SupplierDetailPage from "./routes/suppliers/SupplierDetailPage.jsx";
 import SuppliersPage from "./routes/suppliers/SuppliersPage.jsx";
-import TransactionsPage from "./routes/transactions/TransactionsPage.jsx";
-import { store } from "./store";
+import AddPurchaseTransactionPage from "./routes/transactions/AddPurchaseTransactionPage.jsx";
 import AddSellingTransactionPage from "./routes/transactions/AddSellingTransactionPage.jsx";
 import TransactionDetailPage from "./routes/transactions/TransactionDetailPage.jsx";
-import AddPurchaseTransactionPage from "./routes/transactions/AddPurchaseTransactionPage.jsx";
+import TransactionsPage from "./routes/transactions/TransactionsPage.jsx";
+import { store } from "./store";
 
 const router = createBrowserRouter([
   {

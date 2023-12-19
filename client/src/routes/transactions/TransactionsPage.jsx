@@ -1,46 +1,33 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import moment from "moment";
-import Button from "../../components/UI/Button";
-import currencyFormatter from "../../utils/currencyFormatter";
-import { Link } from "react-router-dom";
-import countSupplier from "../../utils/countSupplier";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../../store/reducers/ui";
-import dateFormatter from "../../utils/dateFormatter";
 import Anchor from "../../components/UI/Anchor";
+import Button from "../../components/UI/Button";
+import useLoading from "../../hooks/useLoading";
+import countSupplier from "../../utils/countSupplier";
+import currencyFormatter from "../../utils/currencyFormatter";
+import dateFormatter from "../../utils/dateFormatter";
 
 function TransactionsPage() {
   const [transactionGroups, setTransactionGroups] = useState([]);
-  const dispatch = useDispatch();
+  const loading = useLoading();
 
   useEffect(() => {
     (async function () {
-      try {
-        // Render loading spinner
-        dispatch(setIsLoading(true));
+      await loading({
+        async fn() {
+          // Fetch all transaction group
+          const { data } = await axios.get("/api/transaction-groups");
 
-        // Fetch all transaction group
-        const { data } = await axios.get("/api/transaction-groups");
+          // Count suppliers
+          const modifiedData = countSupplier(data);
 
-        // Count suppliers
-        const modifiedData = countSupplier(data);
-
-        // set transactionGroups state
-        setTransactionGroups(modifiedData);
-      } catch (err) {
-        // Do something when wrong
-        if (err.response) {
-          console.error(err.response.data.message);
-        }
-        console.error(err);
-      } finally {
-        // Remove loading spinner
-        dispatch(setIsLoading(false));
-      }
+          // set transactionGroups state
+          setTransactionGroups(modifiedData);
+        },
+      });
     })();
-  }, [dispatch]);
+  }, [loading]);
 
   function totalPriceColor(transactionType) {
     if (transactionType === "sell") {

@@ -24,7 +24,6 @@ const addTransactionSchema = checkSchema({
     notEmpty: true,
   },
   note: {
-    escape: true,
     trim: true,
   },
 });

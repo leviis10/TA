@@ -1,38 +1,30 @@
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import useLoading from "../../hooks/useLoading";
 import { logout } from "../../store/reducers/auth";
 import Button from "./Button";
-import { setIsLoading } from "../../store/reducers/ui";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 function Navbar() {
-  const { token, username } = useSelector((state) => state.auth);
+  const { token, username, role } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loading = useLoading();
 
   async function logoutHandler() {
-    try {
-      // Set isLoading global state to true
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Request DELETE request to the backend
+        await axios.delete("/api/auth");
 
-      // Request DELETE request to the backend
-      await axios.delete("/api/auth");
+        // Log user out
+        dispatch(logout());
 
-      // Log user out
-      dispatch(logout());
-
-      // Redirect to root page
-      navigate("/");
-    } catch (err) {
-      // Do something when error
-      if (err.response) {
-        console.error(err.response.data.message);
-      }
-      console.error(err);
-    } finally {
-      dispatch(setIsLoading(false));
-    }
+        // Redirect to root page
+        navigate("/");
+      },
+    });
   }
 
   function isLinkActive({ isActive }) {
@@ -61,20 +53,26 @@ function Navbar() {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/employees" className={isLinkActive}>
-                Employee
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/suppliers" className={isLinkActive}>
-                Supplier
-              </NavLink>
-            </li>
-            <li>
               <NavLink to="/stocks" className={isLinkActive}>
                 Stock
               </NavLink>
             </li>
+
+            {/* Protected routes */}
+            {role === "admin" && (
+              <>
+                <li>
+                  <NavLink to="/employees" className={isLinkActive}>
+                    Employee
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/suppliers" className={isLinkActive}>
+                    Supplier
+                  </NavLink>
+                </li>
+              </>
+            )}
             <li>
               <Button onClick={logoutHandler} variant="red">
                 Logout

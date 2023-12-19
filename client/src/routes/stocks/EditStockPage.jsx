@@ -5,8 +5,7 @@ import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
-import { useDispatch } from "react-redux";
-import { setIsLoading } from "../../store/reducers/ui";
+import useLoading from "../../hooks/useLoading";
 
 function EditStockPage() {
   const { stockId } = useParams();
@@ -15,35 +14,24 @@ function EditStockPage() {
   const [priceInput, setPriceInput] = useState();
   const [descriptionInput, setDescriptionInput] = useState();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const loading = useLoading();
 
   useEffect(() => {
     (async function () {
-      try {
-        // Render loading spinner
-        dispatch(setIsLoading(true));
+      await loading({
+        async fn() {
+          // Fetch stock value
+          const { data } = await axios.get(`/api/stocks/${stockId}`);
+          setStock(data);
 
-        // Fetch stock value
-        const { data } = await axios.get(`/api/stocks/${stockId}`);
-        setStock(data);
-
-        // Pre fill form
-        setQuantityInput(data.quantity);
-        setPriceInput(data.price);
-        setDescriptionInput(data.description || "");
-      } catch (err) {
-        // Do something when error
-        if (err.response) {
-          console.error(err.response.data.message);
-          return;
-        }
-        console.error(err);
-      } finally {
-        // Remove loading spinner
-        dispatch(setIsLoading(false));
-      }
+          // Pre fill form
+          setQuantityInput(data.quantity);
+          setPriceInput(data.price);
+          setDescriptionInput(data.description || "");
+        },
+      });
     })();
-  }, [stockId, dispatch]);
+  }, [loading, stockId]);
 
   function changeDescriptionInputHandler(e) {
     setDescriptionInput(e.target.value);
@@ -58,34 +46,24 @@ function EditStockPage() {
   }
 
   async function editStock(e) {
-    try {
-      // Prevent form default behaviour
-      e.preventDefault();
+    // Prevent form default behaviour
+    e.preventDefault();
 
-      // Create updated stock object
-      const updatedStock = {
-        quantity: quantityInput,
-        price: priceInput,
-      };
+    // Create updated stock object
+    const updatedStock = {
+      quantity: quantityInput,
+      price: priceInput,
+    };
 
-      // Render loading spinner
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Edit stock in the database
+        await axios.patch(`/api/stocks/${stockId}`, updatedStock);
 
-      // Edit stock in the database
-      await axios.patch(`/api/stocks/${stockId}`, updatedStock);
-
-      // Redirect user to updated stock
-      navigate(`/stocks/${stockId}`);
-    } catch (err) {
-      if (err.response) {
-        console.error(err.response.data.message);
-        return;
-      }
-      console.error(err);
-    } finally {
-      // Remove loading spinner
-      dispatch(setIsLoading(false));
-    }
+        // Redirect user to updated stock
+        navigate(`/stocks/${stockId}`);
+      },
+    });
   }
 
   return (

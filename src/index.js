@@ -79,7 +79,7 @@ app.all("*", (req, res) => {
 app.use((err, req, res, next) => {
   const { message = "Something went wrong", statusCode = 500 } = err;
   console.error("=".repeat(20));
-  console.error(err.message);
+  console.error(err);
   console.error("=".repeat(20));
   res.status(statusCode).send({ message, statusCode });
 });

@@ -1,64 +1,62 @@
+import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/UI/Button";
-import { PlusIcon } from "@heroicons/react/24/solid";
-import { setIsLoading } from "../../store/reducers/ui";
 import Input from "../../components/UI/Input";
+import useLoading from "../../hooks/useLoading";
+import { setAlert } from "../../store/reducers/ui";
 
 function SuppliersPage() {
   const [suppliers, setSuppliers] = useState([]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const loading = useLoading();
 
   useEffect(() => {
     (async function () {
-      try {
-        // Render loading spinner
-        dispatch(setIsLoading(true));
+      await loading({
+        async fn() {
+          // Get all suppliers from database
+          const { data } = await axios.get("/api/suppliers");
 
-        // Get all suppliers from database
-        const { data } = await axios.get("/api/suppliers");
+          // set suppliers state
+          setSuppliers(data);
+        },
+        errorFn(err) {
+          // If error because forbidden(403) navigate to home route
+          if (err.response.status === 403) {
+            // Set error alert
+            dispatch(
+              setAlert({
+                show: true,
+                message: err.response.data.message,
+                isError: true,
+              })
+            );
 
-        // set suppliers state
-        setSuppliers(data);
-      } catch (err) {
-        // Do something when error
-        if (err.response) {
-          console.error(err.response.data.message);
-          return;
-        }
-        console.error(err);
-      } finally {
-        // Remove loading spinner
-        dispatch(setIsLoading(false));
-      }
+            // Redirect to home page
+            navigate("/");
+          }
+        },
+      });
     })();
-  }, [dispatch]);
+  }, [loading, navigate, dispatch]);
 
   async function deleteSupplierHandler(supplier) {
-    try {
-      // Render loading spinner
-      dispatch(setIsLoading(true));
+    await loading({
+      async fn() {
+        // Send DELETE request to the api
+        await axios.delete(`/api/suppliers/${supplier.id}`);
 
-      // Send DELETE request to the api
-      await axios.delete(`/api/suppliers/${supplier.id}`);
+        // Re-fetch suppliers data
+        const { data } = await axios.get("/api/suppliers");
 
-      // Re-fetch suppliers data
-      const { data } = await axios.get("/api/suppliers");
-
-      // Set supplier again
-      setSuppliers(data);
-    } catch (err) {
-      // Do something when error
-      if (err.response) {
-        console.error(err.response.data.message);
-        return;
-      }
-      console.error(err);
-    } finally {
-      // Remove loading spinner
-      dispatch(setIsLoading(false));
-    }
+        // Set supplier again
+        setSuppliers(data);
+      },
+    });
   }
 
   return (

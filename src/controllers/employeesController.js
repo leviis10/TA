@@ -31,12 +31,12 @@ const getEmployee = catchAsync(async (req, res) => {
 
 const createEmployee = catchAsync(async (req, res) => {
   const encryptedPassword = await bcrypt.hash(req.body.password, 12);
-  await Employee.create({
+  const newEmployee = await Employee.create({
     ...req.body,
     role: "employee",
     password: encryptedPassword,
   });
-  res.status(201).send({ message: "Employee created successfully" });
+  res.status(201).send(newEmployee);
 });
 
 const deleteEmployee = catchAsync(async (req, res) => {

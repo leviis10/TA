@@ -24,9 +24,6 @@ const editStockSchema = checkSchema(
       errorMessage:
         "Price must be an integer number and greater than or equal to 0",
     },
-    description: {
-      escape: true,
-    },
   },
   ["body"]
 );

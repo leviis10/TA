@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Layout from "../components/UI/Layout";
+import Spinner from "../components/UI/Spinner";
 import LoginModal from "../components/auth/LoginModal";
 import { login } from "../store/reducers/auth";
-import Spinner from "../components/UI/Spinner";
 import { setIsLoading } from "../store/reducers/ui";
 
 function Root() {
@@ -24,7 +24,7 @@ function Root() {
         // GET user token from cookies
         const { data } = await axios.get("/api/auth");
 
-        // If there is a token log user in
+        // If there is a token then user is logged in
         dispatch(login(data));
       } catch (err) {
         // Redirect user to "/" if there is no authToken in cookies
