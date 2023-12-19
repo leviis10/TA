@@ -6,6 +6,7 @@ import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
+import useProtectedRoute from "../../hooks/useProtectedRoute";
 
 function AddEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -15,6 +16,8 @@ function AddEmployeePage() {
   const [addressInput, setAddressInput] = useState("");
   const navigate = useNavigate();
   const loading = useLoading();
+
+  useProtectedRoute();
 
   function changeUsernameInputHandler(e) {
     setUsernameInput(e.target.value);

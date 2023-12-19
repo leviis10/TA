@@ -6,6 +6,7 @@ import Button from "../../components/UI/Button";
 import useLoading from "../../hooks/useLoading";
 import currencyFormatter from "../../utils/currencyFormatter";
 import dateFormatter from "../../utils/dateFormatter";
+import useProtectedRoute from "../../hooks/useProtectedRoute";
 
 function EmployeeDetailPage() {
   const [employee, setEmployee] = useState();
@@ -13,6 +14,8 @@ function EmployeeDetailPage() {
   const { employeeId } = useParams();
   const navigate = useNavigate();
   const loading = useLoading();
+
+  useProtectedRoute();
 
   useEffect(() => {
     (async function () {
@@ -34,8 +37,10 @@ function EmployeeDetailPage() {
           // setTransactionGroups(transactionGroups);
           setTransactionGroups(transactionGroups);
         },
-        errorFn() {
-          navigate("/employees");
+        errorFn(err) {
+          if (err.response.status === 404) {
+            navigate("/employees");
+          }
         },
       });
     })();

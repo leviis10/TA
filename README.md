@@ -21,8 +21,8 @@ semangat mengerjakan tugas akhir levi
 - ~~Check when user update stock, redirect user to '/stocks/:id'~~
 - ~~Hide some route from regular employee~~
 - ~~Improve error handler UI~~
-- set error alert if user go to forbidden routes
-- refactor protected routes with custom hooks
+- ~~set error alert if user go to forbidden routes~~
+- ~~refactor protected routes with custom hooks~~
 - ~~refactor loading state with custom hooks~~
 
 ### Features

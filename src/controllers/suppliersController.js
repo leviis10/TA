@@ -3,6 +3,7 @@ const Stock = require("../models/Stock");
 const Supplier = require("../models/Supplier");
 const Transaction = require("../models/Transaction");
 const TransactionGroup = require("../models/TransactionGroup");
+const ExpressError = require("../utils/ExpressError");
 const catchAsync = require("../utils/catchAsync");
 
 const getAllSuppliers = catchAsync(async (req, res) => {
@@ -15,6 +16,9 @@ const getSupplierDetail = catchAsync(async (req, res) => {
   const supplier = await Supplier.findByPk(id, {
     include: [{ model: Stock }],
   });
+  if (!supplier) {
+    throw new ExpressError("No Supplier found", 404);
+  }
   res.send(supplier);
 });
 

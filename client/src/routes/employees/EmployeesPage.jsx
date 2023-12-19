@@ -1,19 +1,17 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Button from "../../components/UI/Button";
 import Input from "../../components/UI/Input";
 import useLoading from "../../hooks/useLoading";
-import { setAlert } from "../../store/reducers/ui";
+import useProtectedRoute from "../../hooks/useProtectedRoute";
 
 function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const { id } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const loading = useLoading();
+  useProtectedRoute();
 
   useEffect(() => {
     (async function () {
@@ -25,25 +23,9 @@ function EmployeesPage() {
           // Set employee to the state
           setEmployees(data);
         },
-        errorFn(err) {
-          // If error because forbidden(403)
-          if (err.response.status === 403) {
-            // Set error alert
-            dispatch(
-              setAlert({
-                show: true,
-                message: err.response.data.message,
-                isError: true,
-              })
-            );
-
-            // Redirect to home page
-            navigate("/");
-          }
-        },
       });
     })();
-  }, [dispatch, loading, navigate]);
+  }, [loading]);
 
   async function deleteEmployee(employee) {
     await loading({

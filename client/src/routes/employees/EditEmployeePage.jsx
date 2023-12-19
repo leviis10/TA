@@ -1,13 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../components/UI/Button";
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
-import { setAlert, setIsLoading } from "../../store/reducers/ui";
+import useProtectedRoute from "../../hooks/useProtectedRoute";
 
 function EditEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -16,8 +15,9 @@ function EditEmployeePage() {
   const [addressInput, setAddressInput] = useState("");
   const { employeeId } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const loading = useLoading();
+
+  useProtectedRoute();
 
   useEffect(() => {
     (async function () {
@@ -32,8 +32,10 @@ function EditEmployeePage() {
           setPhoneNumberInput(data.phoneNumber);
           setAddressInput(data.address);
         },
-        errorFn() {
-          navigate("/employees");
+        errorFn(err) {
+          if (err.response.status === 404) {
+            navigate("/employees");
+          }
         },
       });
     })();

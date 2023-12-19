@@ -6,6 +6,7 @@ import Button from "../../components/UI/Button";
 import useLoading from "../../hooks/useLoading";
 import currencyFormatter from "../../utils/currencyFormatter";
 import dateFormatter from "../../utils/dateFormatter";
+import useProtectedRoute from "../../hooks/useProtectedRoute";
 
 function SupplierDetailPage() {
   const { supplierId } = useParams();
@@ -13,6 +14,8 @@ function SupplierDetailPage() {
   const [transactionGroups, setTransactionGroups] = useState([]);
   const navigate = useNavigate();
   const loading = useLoading();
+
+  useProtectedRoute();
 
   useEffect(() => {
     (async function () {
@@ -32,9 +35,11 @@ function SupplierDetailPage() {
           setSupplier(supplier);
           setTransactionGroups(transactionGroups);
         },
-        errorFn() {
-          // Redirect to all suppliers
-          navigate("/suppliers");
+        errorFn(err) {
+          if (err.response.status === 404) {
+            // Redirect to all suppliers
+            navigate("/suppliers");
+          }
         },
       });
     })();

@@ -6,6 +6,7 @@ import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
+import useProtectedRoute from "../../hooks/useProtectedRoute";
 
 function EditSupplierPage() {
   const [supplierNameInput, setSupplierNameInput] = useState("");
@@ -14,6 +15,8 @@ function EditSupplierPage() {
   const { supplierId } = useParams();
   const navigate = useNavigate();
   const loading = useLoading();
+
+  useProtectedRoute();
 
   useEffect(() => {
     (async function () {
@@ -27,9 +30,14 @@ function EditSupplierPage() {
           setPhoneNumberInput(data.phoneNumber);
           setAddressInput(data.address);
         },
+        errorFn(err) {
+          if (err.response.status === 404) {
+            navigate("/suppliers");
+          }
+        },
       });
     })();
-  }, [loading, supplierId]);
+  }, [loading, supplierId, navigate]);
 
   function changeSupplierNameInputHandler(e) {
     setSupplierNameInput(e.target.value);

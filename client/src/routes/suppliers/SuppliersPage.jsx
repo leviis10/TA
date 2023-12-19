@@ -1,18 +1,16 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import Button from "../../components/UI/Button";
 import Input from "../../components/UI/Input";
 import useLoading from "../../hooks/useLoading";
-import { setAlert } from "../../store/reducers/ui";
+import useProtectedRoute from "../../hooks/useProtectedRoute";
 
 function SuppliersPage() {
   const [suppliers, setSuppliers] = useState([]);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const loading = useLoading();
+
+  useProtectedRoute();
 
   useEffect(() => {
     (async function () {
@@ -24,25 +22,9 @@ function SuppliersPage() {
           // set suppliers state
           setSuppliers(data);
         },
-        errorFn(err) {
-          // If error because forbidden(403) navigate to home route
-          if (err.response.status === 403) {
-            // Set error alert
-            dispatch(
-              setAlert({
-                show: true,
-                message: err.response.data.message,
-                isError: true,
-              })
-            );
-
-            // Redirect to home page
-            navigate("/");
-          }
-        },
       });
     })();
-  }, [loading, navigate, dispatch]);
+  }, [loading]);
 
   async function deleteSupplierHandler(supplier) {
     await loading({
