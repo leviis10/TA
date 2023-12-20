@@ -1,6 +1,5 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+require("dotenv").config();
+const path = require("path");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const sequelize = require("./db");
@@ -71,6 +70,15 @@ app.use("/api/stocks", stocksRoute);
 app.use("/api/transactions", transactionsRoute);
 app.use("/api/transaction-groups", transactionGroupRoute);
 
+// Serve static asset in production
+if (process.env.NODE_ENV === "production") {
+  const clientDir = path.join(__dirname, "..", "client", "dist");
+  app.use(express.static(clientDir));
+  app.get("*", (req, res) => {
+    res.sendFile(clientDir);
+  });
+}
+
 // Error handler
 app.all("*", (req, res) => {
   throw new ExpressError("Resource not found", 404);
@@ -78,9 +86,6 @@ app.all("*", (req, res) => {
 
 app.use((err, req, res, next) => {
   const { message = "Something went wrong", statusCode = 500 } = err;
-  console.error("=".repeat(20));
-  console.error(err);
-  console.error("=".repeat(20));
   res.status(statusCode).send({ message, statusCode });
 });
 

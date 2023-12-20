@@ -6,7 +6,8 @@
   "scripts": {
     "client": "cd client && npm run dev",
     "server": "nodemon src/index.js",
-    "dev": "concurrently \"npm run client\" \"npm run server\""
+    "dev": "concurrently \"npm run client\" \"npm run server\"",
+    "start": "cross-env NODE_ENV=production node src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "nodemon": "^3.0.1"
   }
