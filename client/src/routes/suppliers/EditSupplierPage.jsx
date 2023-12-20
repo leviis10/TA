@@ -7,6 +7,8 @@ import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
 import useProtectedRoute from "../../hooks/useProtectedRoute";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function EditSupplierPage() {
   const [supplierNameInput, setSupplierNameInput] = useState("");
@@ -15,6 +17,7 @@ function EditSupplierPage() {
   const { supplierId } = useParams();
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useProtectedRoute();
 
@@ -66,6 +69,15 @@ function EditSupplierPage() {
       async fn() {
         // Send PUT request to API
         await axios.put(`/api/suppliers/${supplierId}`, updatedSupplier);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully update supplier",
+            isError: false,
+          })
+        );
 
         // Clear input
         setSupplierNameInput("");

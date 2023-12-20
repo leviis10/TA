@@ -7,6 +7,8 @@ import useLoading from "../../hooks/useLoading";
 import currencyFormatter from "../../utils/currencyFormatter";
 import dateFormatter from "../../utils/dateFormatter";
 import useProtectedRoute from "../../hooks/useProtectedRoute";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function SupplierDetailPage() {
   const { supplierId } = useParams();
@@ -14,6 +16,7 @@ function SupplierDetailPage() {
   const [transactionGroups, setTransactionGroups] = useState([]);
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useProtectedRoute();
 
@@ -50,6 +53,15 @@ function SupplierDetailPage() {
       async fn() {
         // Delete supplier
         await axios.delete(`/api/suppliers/${supplierId}`);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully delete supplier",
+            isError: false,
+          })
+        );
 
         // Redirect to all suppliers
         navigate("/suppliers");

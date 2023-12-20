@@ -24,6 +24,7 @@ semangat mengerjakan tugas akhir levi
 - ~~set error alert if user go to forbidden routes~~
 - ~~refactor protected routes with custom hooks~~
 - ~~refactor loading state with custom hooks~~
+- ~~add success alert on employee, supplier, stock, transaction route~~
 
 ### Features
 

@@ -4,12 +4,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import Button from "../../components/UI/Button";
 import useLoading from "../../hooks/useLoading";
 import currencyFormatter from "../../utils/currencyFormatter";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function TransactionDetailPage() {
   const { transactionGroupId } = useParams();
   const [transactionGroup, setTransactionGroup] = useState(null);
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
@@ -30,6 +33,17 @@ function TransactionDetailPage() {
       async fn() {
         // Request to delete transaction group
         await axios.delete(`/api/transaction-groups/${transactionGroupId}`);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully delete transaction",
+            isError: false,
+          })
+        );
+
+        // Redirect to all transactions page
         navigate("/transactions");
       },
     });

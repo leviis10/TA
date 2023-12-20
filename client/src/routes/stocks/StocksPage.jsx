@@ -1,15 +1,17 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/UI/Button";
 import Input from "../../components/UI/Input";
 import useLoading from "../../hooks/useLoading";
+import { setAlert } from "../../store/reducers/ui";
 
 function StocksPage() {
   const [stocks, setStocks] = useState([]);
   const { role } = useSelector((state) => state.auth);
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
@@ -30,6 +32,15 @@ function StocksPage() {
       async fn() {
         // Delete stock from database
         await axios.delete(`/api/stocks/${stock.id}`);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully delete stock",
+            isError: false,
+          })
+        );
 
         // Re-fetch stock
         const { data } = await axios.get("/api/stocks");

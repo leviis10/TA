@@ -6,6 +6,8 @@ import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function AddStockPage() {
   const [suppliers, setSuppliers] = useState([]);
@@ -16,6 +18,7 @@ function AddStockPage() {
   const [supplierNameInput, setSupplierNameInput] = useState("");
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
@@ -68,6 +71,15 @@ function AddStockPage() {
       async fn() {
         // Send POST request to the API
         const { data } = await axios.post("/api/stocks", newStock);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully create new stock",
+            isError: false,
+          })
+        );
 
         // Redirect to the new stock detail page
         navigate(`/stocks/${data.id}`);

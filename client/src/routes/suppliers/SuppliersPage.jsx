@@ -5,10 +5,13 @@ import Button from "../../components/UI/Button";
 import Input from "../../components/UI/Input";
 import useLoading from "../../hooks/useLoading";
 import useProtectedRoute from "../../hooks/useProtectedRoute";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function SuppliersPage() {
   const [suppliers, setSuppliers] = useState([]);
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useProtectedRoute();
 
@@ -31,6 +34,15 @@ function SuppliersPage() {
       async fn() {
         // Send DELETE request to the api
         await axios.delete(`/api/suppliers/${supplier.id}`);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully delete supplier",
+            isError: false,
+          })
+        );
 
         // Re-fetch suppliers data
         const { data } = await axios.get("/api/suppliers");

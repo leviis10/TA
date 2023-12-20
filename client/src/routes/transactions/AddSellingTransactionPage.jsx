@@ -167,6 +167,15 @@ function AddSellingTransactionPage() {
           await axios.post("/api/transactions?type=sell", item);
         }
 
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully add new selling transaction",
+            isError: false,
+          })
+        );
+
         // Redirect to transaction detail page
         navigate(`/transactions/${data.id}`);
       },

@@ -83,6 +83,7 @@ const getStockDetail = catchAsync(async (req, res) => {
 
 const updateStock = catchAsync(async (req, res) => {
   const { id } = req.params;
+  console.log(req.body);
   await Stock.update(req.body, { where: { id } });
   res.send({ message: "Stock updated successfully" });
 });

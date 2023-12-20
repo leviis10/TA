@@ -7,6 +7,8 @@ import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
 import useProtectedRoute from "../../hooks/useProtectedRoute";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function EditEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -16,6 +18,7 @@ function EditEmployeePage() {
   const { employeeId } = useParams();
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useProtectedRoute();
 
@@ -72,6 +75,15 @@ function EditEmployeePage() {
       async fn() {
         // Send put request to the server
         await axios.put(`/api/employees/${employeeId}`, employee);
+
+        // Set success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully edit an employee",
+            isError: false,
+          })
+        );
 
         // Clear all input
         setUsernameInput("");

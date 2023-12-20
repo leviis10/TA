@@ -7,6 +7,8 @@ import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
 import useProtectedRoute from "../../hooks/useProtectedRoute";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function AddSupplierPage() {
   const [supplierNameInput, setSupplierNameInput] = useState("");
@@ -14,6 +16,7 @@ function AddSupplierPage() {
   const [addressInput, setAddressInput] = useState("");
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useProtectedRoute();
 
@@ -44,6 +47,15 @@ function AddSupplierPage() {
       async fn() {
         // Send request to the API
         const { data } = await axios.post("/api/suppliers", supplier);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully create new supplier",
+            isError: false,
+          })
+        );
 
         // Clear form
         setSupplierNameInput("");

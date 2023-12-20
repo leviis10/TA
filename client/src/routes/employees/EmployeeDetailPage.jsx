@@ -7,6 +7,8 @@ import useLoading from "../../hooks/useLoading";
 import currencyFormatter from "../../utils/currencyFormatter";
 import dateFormatter from "../../utils/dateFormatter";
 import useProtectedRoute from "../../hooks/useProtectedRoute";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function EmployeeDetailPage() {
   const [employee, setEmployee] = useState();
@@ -14,6 +16,7 @@ function EmployeeDetailPage() {
   const { employeeId } = useParams();
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useProtectedRoute();
 
@@ -51,6 +54,15 @@ function EmployeeDetailPage() {
       async fn() {
         // Delete employee
         await axios.delete(`/api/employees/${employeeId}`);
+
+        // Set success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully delete an employee",
+            isError: false,
+          })
+        );
 
         // Redirect to all employees page
         navigate("/employees");

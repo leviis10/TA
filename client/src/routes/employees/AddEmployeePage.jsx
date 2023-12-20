@@ -7,6 +7,8 @@ import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
 import useProtectedRoute from "../../hooks/useProtectedRoute";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function AddEmployeePage() {
   const [usernameInput, setUsernameInput] = useState("");
@@ -16,6 +18,7 @@ function AddEmployeePage() {
   const [addressInput, setAddressInput] = useState("");
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useProtectedRoute();
 
@@ -56,6 +59,15 @@ function AddEmployeePage() {
       async fn() {
         // Add User to the database
         const { data } = await axios.post("/api/employees", employee);
+
+        // Set success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully create new employee",
+            isError: false,
+          })
+        );
 
         // Clear all input field
         setUsernameInput("");

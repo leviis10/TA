@@ -166,6 +166,15 @@ function AddPurchaseTransactionPage() {
           await axios.post("/api/transactions?type=purchase", item);
         }
 
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully create new purchase transaction",
+            isError: false,
+          })
+        );
+
         // Redirect to all transaction page
         navigate(`/transactions/${data.id}`);
       },

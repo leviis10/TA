@@ -1,16 +1,19 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "../../components/UI/Button";
 import Input from "../../components/UI/Input";
 import useLoading from "../../hooks/useLoading";
 import useProtectedRoute from "../../hooks/useProtectedRoute";
+import { setAlert } from "../../store/reducers/ui";
 
 function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const { id } = useSelector((state) => state.auth);
   const loading = useLoading();
+  const dispatch = useDispatch();
+
   useProtectedRoute();
 
   useEffect(() => {
@@ -32,6 +35,15 @@ function EmployeesPage() {
       async fn() {
         // Delete employee
         await axios.delete(`/api/employees/${employee.id}`);
+
+        // Set success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully delete an employee",
+            isError: false,
+          })
+        );
 
         // Fetch employee again from database
         const { data } = await axios.get("/api/employees");

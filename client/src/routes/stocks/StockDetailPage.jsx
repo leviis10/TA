@@ -5,12 +5,15 @@ import Anchor from "../../components/UI/Anchor";
 import Button from "../../components/UI/Button";
 import useLoading from "../../hooks/useLoading";
 import dateFormatter from "../../utils/dateFormatter";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function StockDetailPage() {
   const { stockId } = useParams();
   const [stock, setStock] = useState();
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
@@ -33,7 +36,19 @@ function StockDetailPage() {
   async function deleteStockHandler() {
     await loading({
       async fn() {
+        // Delete stock in the database
         await axios.delete(`/api/stocks/${stockId}`);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully delete stock",
+            isError: false,
+          })
+        );
+
+        // Redirect to all stocks page
         navigate("/stocks");
       },
     });

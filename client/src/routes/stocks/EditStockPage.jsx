@@ -6,6 +6,8 @@ import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import Textarea from "../../components/UI/Textarea";
 import useLoading from "../../hooks/useLoading";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../store/reducers/ui";
 
 function EditStockPage() {
   const { stockId } = useParams();
@@ -15,6 +17,7 @@ function EditStockPage() {
   const [descriptionInput, setDescriptionInput] = useState();
   const navigate = useNavigate();
   const loading = useLoading();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async function () {
@@ -53,12 +56,22 @@ function EditStockPage() {
     const updatedStock = {
       quantity: quantityInput,
       price: priceInput,
+      description: descriptionInput,
     };
 
     await loading({
       async fn() {
         // Edit stock in the database
         await axios.patch(`/api/stocks/${stockId}`, updatedStock);
+
+        // Show success alert
+        dispatch(
+          setAlert({
+            show: true,
+            message: "Successfully update stock",
+            isError: false,
+          })
+        );
 
         // Redirect user to updated stock
         navigate(`/stocks/${stockId}`);
@@ -72,14 +85,6 @@ function EditStockPage() {
       {stock && (
         <Card className="max-w-lg mx-auto">
           <form onSubmit={editStock}>
-            {/* Id field */}
-            <div className="flex flex-col gap-2 mb-4">
-              <label htmlFor="stockId" className="text-lg">
-                Stock Id:
-              </label>
-              <Input type="text" id="stockId" value={stock.id} disabled />
-            </div>
-
             {/* Supplier name field */}
             <div className="flex flex-col gap-2 mb-4">
               <label htmlFor="supplierName" className="text-lg">
